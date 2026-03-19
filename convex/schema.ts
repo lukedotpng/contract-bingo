@@ -14,8 +14,8 @@ export default defineSchema({
             v.literal("active"),
             v.literal("finished"),
         ),
-        teams: v.array(v.id("team")),
-        board: v.id("board"),
+        teamIds: v.array(v.id("team")),
+        boardId: v.id("board"),
     }),
     board: defineTable({
         boardSize: v.union(
@@ -23,7 +23,6 @@ export default defineSchema({
             v.literal("5x5"),
         ),
         seed: v.int64(),
-        contracts: v.array(v.id("contract")),
     }),
     contract: defineTable({
         // At least one contract ID always needed, enforced in app level
@@ -32,7 +31,6 @@ export default defineSchema({
         xboxId: v.optional(v.string()),
         playstationId: v.optional(v.string()),
         switchId: v.optional(v.string()),
-        submissions: v.array(v.id("scoreSubmission")),
         location: v.union(
             v.literal("freeform_training"),
             v.literal("the_final_test"),
@@ -67,13 +65,18 @@ export default defineSchema({
             v.literal("the_dartmoor_garden_show"),
         ),
     }),
+    boardToContract: defineTable({
+        boardId: v.id("board"),
+        contractId: v.id("contract"),
+        submissionIds: v.array(v.id("scoreSubmission")),
+    }),
     team: defineTable({
         color: v.string(),
-        players: v.nullable(v.array(v.id("player"))),
+        playerIds: v.nullable(v.array(v.id("player"))),
     }),
     scoreSubmission: defineTable({
-        team: v.id("team"),
-        playerName: v.id("player"),
+        teamId: v.id("team"),
+        playerId: v.id("player"),
         score: v.int64(),
         timestamp: v.int64(),
         status: v.union(v.literal("valid"), v.literal("rejected")),
@@ -81,12 +84,12 @@ export default defineSchema({
     }),
     player: defineTable({
         username: v.string(),
-        platform: v.union(
+        platform: v.optional(v.union(
             v.literal("Epic"),
             v.literal("Steam"),
             v.literal("Playstation"),
             v.literal("Xbox"),
             v.literal("Nintendo Switch"),
-        ),
+        )),
     }),
 });
