@@ -16,7 +16,7 @@ export default defineSchema({
         ),
         teamIds: v.array(v.id("team")),
         boardId: v.id("board"),
-    }),
+    }).index("status", ["status"]),
     board: defineTable({
         boardSize: v.union(
             v.literal("4x4"),
@@ -69,7 +69,9 @@ export default defineSchema({
         boardId: v.id("board"),
         contractId: v.id("contract"),
         submissionIds: v.array(v.id("scoreSubmission")),
-    }),
+    })
+        .index("boardId", ["boardId"])
+        .index("contractId", ["contractId"]),
     team: defineTable({
         color: v.string(),
         playerIds: v.nullable(v.array(v.id("player"))),
@@ -81,7 +83,10 @@ export default defineSchema({
         timestamp: v.int64(),
         status: v.union(v.literal("valid"), v.literal("rejected")),
         rejectedReason: v.optional(v.string()),
-    }),
+    })
+        .index("playerId", ["playerId"])
+        .index("timestamp", ["timestamp"])
+        .index("status", ["status"]),
     player: defineTable({
         username: v.string(),
         platform: v.optional(v.union(
@@ -91,5 +96,6 @@ export default defineSchema({
             v.literal("Xbox"),
             v.literal("Nintendo Switch"),
         )),
-    }),
+    })
+        .index("username", ["username"]),
 });
