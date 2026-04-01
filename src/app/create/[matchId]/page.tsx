@@ -3,7 +3,7 @@
 import { useState } from "react";
 import BoardSizeSelection from "./components/BoardSizeSelection";
 import TeamCountSelection from "./components/TeamCountSelection";
-import ContractIdUpload from "./components/ContractIdUpload";
+import ContractIdUpload from "./components/ContractSubmission";
 import ContractsList from "./components/ContractsList";
 
 export default function Page() {
