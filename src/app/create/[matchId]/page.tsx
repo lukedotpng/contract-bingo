@@ -5,6 +5,7 @@ import BoardSizeSelection from "./components/BoardSizeSelection";
 import TeamCountSelection from "./components/TeamCountSelection";
 import ContractIdUpload from "./components/ContractSubmission";
 import ContractsList from "./components/ContractsList";
+import BingoBoardPreview from "./components/BingoBoardPreview";
 
 export default function Page() {
     const [boardSize, setBoardSize] = useState(4);
@@ -17,10 +18,6 @@ export default function Page() {
     function AddContracts(newContracts: Contract[]) {
         setContracts((oldContracts) => [...oldContracts, ...newContracts]);
     }
-
-    // temp
-    const matchContracts: string[] = new Array(boardSize ** 2);
-    matchContracts.fill("hi");
 
     return (
         <main className="flex flex-row-reverse flex-wrap justify-end">
@@ -44,19 +41,7 @@ export default function Page() {
             </section>
             {/* Board */}
             <section className="p-2 w-180">
-                <div
-                    data-gridsize={boardSize}
-                    className="grid gap-1 data-[gridsize=5]:grid-cols-5 data-[gridsize=5]:grid-rows-5 data-[gridsize=4]:grid-cols-4 data-[gridsize=4]:grid-rows-4"
-                >
-                    {matchContracts.map((contract, index) => (
-                        <div
-                            key={index}
-                            className="bg-gray-200 text-black aspect-square grid place-content-center"
-                        >
-                            {contract}
-                        </div>
-                    ))}
-                </div>
+                <BingoBoardPreview size={boardSize} contracts={contracts} />
             </section>
         </main>
     );
