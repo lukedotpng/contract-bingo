@@ -7,9 +7,9 @@ export default function ContractsList({
 }) {
     return (
         <div className="flex flex-col gap-2">
-            {contracts.map((contract, index) => (
+            {contracts.map((contract) => (
                 <details
-                    key={index}
+                    key={contract.id}
                     className="group bg-slate-600 w-full max-w-96 border-2 border-slate-400 select-none"
                 >
                     <summary className="p-1 font-bold group-[:open]:border-b-2 border-slate-400 cursor-default">

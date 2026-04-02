@@ -60,6 +60,7 @@ export default function SingleContractDialog({
         const xboxParsed = ParseContractId(xboxInput);
         const switchParsed = ParseContractId(switchInput);
         const contract: Contract = {
+            id: crypto.randomUUID(),
             location: contractLocation,
             epicId: epicParsed.error === undefined ? epicParsed.id : undefined,
             steamId:

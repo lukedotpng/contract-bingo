@@ -72,6 +72,7 @@ export function ParseBulkContractIds(contractIds: string):
             };
         }
         contracts.push({
+            id: crypto.randomUUID(),
             epicId: epicId,
             steamId: steamId,
             playstationId: playstationId,

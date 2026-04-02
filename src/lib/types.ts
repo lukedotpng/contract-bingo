@@ -1,10 +1,11 @@
 type Contract = {
+    id: string;
+    location: ContractLocation;
     epicId?: string;
     steamId?: string;
     xboxId?: string;
     playstationId?: string;
     switchId?: string;
-    location: ContractLocation;
 };
 
 type ContractLocation =
