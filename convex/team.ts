@@ -28,3 +28,15 @@ export const getTeam = query({
         return team;
     },
 });
+
+export const deleteTeam = mutation({
+    args: {
+        teamId: v.id("team"),
+    },
+    handler: async (ctx, args) => {
+        const team = await ctx.db.get("team", args.teamId);
+        if (team == null) return null;
+
+        await ctx.db.delete("team", args.teamId);
+    },
+});
