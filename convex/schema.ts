@@ -7,7 +7,7 @@ export default defineSchema({
         teamCount: v.number(),
         // Start time in Unix time
         startTime: v.int64(),
-        gracePeriodLength: v.int64(),
+        gracePeriodLength: v.number(),
         status: v.union(
             v.literal("pending"),
             v.literal("scheduled"),
@@ -22,7 +22,7 @@ export default defineSchema({
             v.literal("4x4"),
             v.literal("5x5"),
         ),
-        seed: v.int64(),
+        seed: v.number(),
     }),
     contract: defineTable({
         // At least one contract ID always needed, enforced in app level
@@ -73,13 +73,13 @@ export default defineSchema({
         .index("boardId", ["boardId"])
         .index("contractId", ["contractId"]),
     team: defineTable({
-        color: v.string(),
-        playerIds: v.nullable(v.array(v.id("player"))),
+        color: v.bytes(),
+        playerIds: v.optional(v.array(v.id("player"))),
     }),
     scoreSubmission: defineTable({
         teamId: v.id("team"),
         playerId: v.id("player"),
-        score: v.int64(),
+        score: v.number(),
         timestamp: v.int64(),
         status: v.union(v.literal("valid"), v.literal("rejected")),
         rejectedReason: v.optional(v.string()),
