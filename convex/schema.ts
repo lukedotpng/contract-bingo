@@ -80,7 +80,7 @@ export default defineSchema({
         teamId: v.id("team"),
         playerId: v.id("player"),
         score: v.number(),
-        timestamp: v.int64(),
+        timestamp: v.number(),
         status: v.union(v.literal("valid"), v.literal("rejected")),
         rejectedReason: v.optional(v.string()),
     })
