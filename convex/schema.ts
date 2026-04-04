@@ -68,10 +68,9 @@ export default defineSchema({
     boardToContract: defineTable({
         boardId: v.id("board"),
         contractId: v.id("contract"),
-        submissionIds: v.array(v.id("scoreSubmission")),
+        submissionIds: v.optional(v.array(v.id("scoreSubmission"))),
     })
-        .index("boardId", ["boardId"])
-        .index("contractId", ["contractId"]),
+        .index("byBoardContract", ["boardId", "contractId"]),
     team: defineTable({
         color: v.bytes(),
         playerIds: v.optional(v.array(v.id("player"))),
