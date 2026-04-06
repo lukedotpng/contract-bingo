@@ -120,27 +120,27 @@ export default function SingleContractDialog({
                         )}
                     </div>
                     <div className="grid grid-cols-2 gap-1.5 my-1">
-                        <ContractCodeInput
+                        <ContractIdField
                             value={epicInput}
                             UpdateValue={setEpicInput}
                             platform={"Epic"}
                         />
-                        <ContractCodeInput
+                        <ContractIdField
                             value={steamInput}
                             UpdateValue={setSteamInput}
                             platform={"Steam"}
                         />
-                        <ContractCodeInput
+                        <ContractIdField
                             value={playstationInput}
                             UpdateValue={setPlaystationInput}
                             platform={"PlayStation"}
                         />
-                        <ContractCodeInput
+                        <ContractIdField
                             value={xboxInput}
                             UpdateValue={setXboxInput}
                             platform={"Xbox"}
                         />
-                        <ContractCodeInput
+                        <ContractIdField
                             value={switchInput}
                             UpdateValue={setSwitchInput}
                             platform={"Nintendo Switch"}
@@ -158,7 +158,7 @@ export default function SingleContractDialog({
     );
 }
 
-function ContractCodeInput({
+function ContractIdField({
     value,
     UpdateValue,
     platform,
