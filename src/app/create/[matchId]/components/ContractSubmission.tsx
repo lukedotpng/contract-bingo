@@ -51,13 +51,13 @@ export default function ContractIdUpload({
             <p className="font-bold">{"Contract IDs"}</p>
             <div className="flex font-bold max-w-96 w-full gap-2">
                 <button
-                    className="flex-1 py-2 bg-slate-600 hover:underline"
+                    className="flex-1 py-2 bg-slate-700 hover:underline"
                     onClick={ShowSingleContractDialog}
                 >
                     {"Add"}
                 </button>
                 <button
-                    className="flex-1 py-2 bg-slate-600 hover:underline"
+                    className="flex-1 py-2 bg-slate-700 hover:underline"
                     onClick={ShowBulkContractDialog}
                 >
                     {"Bulk Add"}

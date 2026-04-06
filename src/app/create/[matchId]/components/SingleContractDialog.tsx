@@ -80,7 +80,7 @@ export default function SingleContractDialog({
         <dialog
             ref={ref}
             closedby="any"
-            className="m-auto p-2 bg-slate-800 border-2 border-slate-400 backdrop:bg-slate-950/50 w-full max-w-[min(40rem,95%)] text-white"
+            className="m-auto p-2 bg-slate-800 border-2 border-slate-600 backdrop:bg-slate-950/50 w-full max-w-[min(40rem,95%)] text-white"
         >
             <form
                 className="flex flex-col gap-2 h-full"
@@ -103,7 +103,7 @@ export default function SingleContractDialog({
                 </div>
                 <div className="h-full">
                     <div
-                        className="grid border-2 border-slate-400 bg-center"
+                        className="grid border-2 border-slate-600 bg-center"
                         style={{
                             backgroundImage: `${contractLocation !== undefined ? `url(/${contractLocation}_background.webp)` : "none"}`,
                         }}

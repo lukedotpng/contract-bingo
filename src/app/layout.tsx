@@ -21,7 +21,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${geistSans.variable} bg-slate-800 text-white text-base`}
+                className={`${geistSans.variable} bg-slate-900 text-white text-base`}
             >
                 <ConvexClientProvider>{children}</ConvexClientProvider>
             </body>

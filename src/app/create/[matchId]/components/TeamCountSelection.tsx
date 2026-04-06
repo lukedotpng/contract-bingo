@@ -16,7 +16,7 @@ export default function TeamCountSelection({
                 key={i}
                 role="checkbox"
                 aria-checked={teamCount === i}
-                className="flex-1 py-2 bg-slate-600 hover:underline aria-checked:inset-shadow-[0_0_7px_var(--color-slate-900)]"
+                className="flex-1 py-2 bg-slate-700 hover:underline aria-checked:inset-shadow-[0_0_10px_var(--color-slate-900)]"
                 onClick={() => {
                     UpdateTeamCount(i);
                 }}
@@ -29,7 +29,7 @@ export default function TeamCountSelection({
     return (
         <div>
             <p className="font-bold">{"# of Teams"}</p>
-            <div className="flex font-bold max-w-96 w-full bg-slate-600 p-0.5 gap-1">
+            <div className="flex font-bold max-w-96 w-full bg-slate-700 p-0.5 gap-1">
                 {teamElements}
             </div>
         </div>

@@ -50,7 +50,7 @@ export default function BulkContractDialog({
         <dialog
             ref={ref}
             closedby="any"
-            className="m-auto p-2 bg-slate-800 border-2 border-slate-400 backdrop:bg-slate-950/50 w-full max-w-[min(40rem,95%)] h-100 text-white"
+            className="m-auto p-2 bg-slate-800 border-2 border-slate-600 backdrop:bg-slate-950/50 w-full max-w-[min(40rem,95%)] h-100 text-white"
         >
             <form
                 className="flex flex-col gap-2 h-full"
@@ -65,13 +65,13 @@ export default function BulkContractDialog({
                     </h1>
                     <button
                         type="button"
-                        className="py-1 px-4 bg-slate-600 hover:underline"
+                        className="py-1 px-4 bg-slate-700 hover:underline"
                         onClick={CloseDialog}
                     >
                         {"Close"}
                     </button>
                 </div>
-                <div className="flex border-2 bg-slate-600 border-slate-400 has-[textarea:focus]:outline-1 outline-offset-1 outline-slate-50 h-full overflow-scroll">
+                <div className="flex border-2 bg-slate-700 border-slate-600 has-[textarea:focus]:outline-1 outline-offset-1 outline-slate-50 h-full overflow-scroll">
                     <span
                         ref={lineNumbersRef}
                         className="whitespace-pre w-[3ch] text-white py-0.5 h-full text-center"
@@ -97,7 +97,7 @@ export default function BulkContractDialog({
                     </span>
                 </div>
                 <button
-                    className="py-1 px-8 bg-slate-600 hover:underline place-self-center"
+                    className="py-1 px-8 bg-slate-700 hover:underline place-self-center"
                     type="submit"
                 >
                     {"Submit"}
