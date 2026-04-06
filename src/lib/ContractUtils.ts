@@ -98,7 +98,7 @@ export function ParseContractId(contractId: string):
 
     if (!contractIdRegex.test(contractId)) {
         return {
-            error: "Failed to parse contract id",
+            error: "Failed to parse contract ID",
         };
     }
 
