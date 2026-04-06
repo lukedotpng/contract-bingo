@@ -9,7 +9,12 @@
  */
 
 import type * as board from "../board.js";
+import type * as boardToContract from "../boardToContract.js";
+import type * as contract from "../contract.js";
 import type * as match from "../match.js";
+import type * as player from "../player.js";
+import type * as scoreSubmission from "../scoreSubmission.js";
+import type * as status from "../status.js";
 import type * as team from "../team.js";
 
 import type {
@@ -20,7 +25,12 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   board: typeof board;
+  boardToContract: typeof boardToContract;
+  contract: typeof contract;
   match: typeof match;
+  player: typeof player;
+  scoreSubmission: typeof scoreSubmission;
+  status: typeof status;
   team: typeof team;
 }>;
 

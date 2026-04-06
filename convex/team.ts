@@ -29,6 +29,28 @@ export const getTeam = query({
     },
 });
 
+export const addPlayerToTeam = mutation({
+    args: {
+        teamId: v.id("team"),
+        playerId: v.id("player"),
+    },
+    handler: async (ctx, args) => {
+        const team = await ctx.db.get("team", args.teamId);
+        if (team == null) return "team doesn't exist with given teamId";
+
+        const player = await ctx.db.get("player", args.playerId);
+        if (player == null) return "player doesn't exist with given playerId";
+
+        if (team.playerIds == null) team.playerIds = [];
+        if (team.playerIds.includes(args.playerId)) return "player already exists within the given team";
+
+        team.playerIds.push(args.playerId);
+        await ctx.db.patch("team", args.teamId, {
+            playerIds: team.playerIds,
+        })
+    },
+});
+
 export const deleteTeam = mutation({
     args: {
         teamId: v.id("team"),
