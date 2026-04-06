@@ -1,6 +1,7 @@
 import { query } from "./_generated/server"
 import { mutation } from "./_generated/server"
 import { v } from "convex/values"
+import { Status } from "./status";
 
 export const createPlayer = mutation({
     args: {
@@ -14,10 +15,12 @@ export const createPlayer = mutation({
         )),
     },
     handler: async (ctx, args) => {
-        return await ctx.db.insert("player", {
+        const playerId = await ctx.db.insert("player", {
             username: args.username,
             platform: args.platform,
         });
+
+        return await ctx.db.get("player", playerId);
     },
 });
 
@@ -27,6 +30,8 @@ export const getPlayer = query({
     },
     handler: async (ctx, args) => {
         const player = await ctx.db.get("player", args.playerId);
+        if (player == null) return Status.NOT_FOUND;
+
         return player;
     },
 });
@@ -45,13 +50,14 @@ export const updatePlayer = mutation({
     },
     handler: async (ctx, args) => {
         const player = await ctx.db.get("player", args.playerId);
-        if (player == null) return null;
+        if (player == null) return Status.NOT_FOUND;
 
-        player.username = args.username;
-        player.platform = args.platform;
+        await ctx.db.patch("player", args.playerId, {
+            username: args.username,
+            platform: args.platform,
+        });
 
-        await ctx.db.patch("player", args.playerId, player);
-        return player;
+        return Status.OK;
     },
 });
 
@@ -61,8 +67,9 @@ export const deletePlayer = mutation({
     },
     handler: async (ctx, args) => {
         const player = await ctx.db.get("player", args.playerId);
-        if (player == null) return;
+        if (player == null) return Status.NOT_FOUND;
 
         await ctx.db.delete("player", args.playerId);
+        return Status.OK;
     },
 });

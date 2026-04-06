@@ -1,8 +1,6 @@
-import { isNull } from "util";
-import { query } from "./_generated/server";
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { BADQUERY } from "dns";
+import { Status } from "./status";
 
 export const createContract = mutation({
     args: {
@@ -53,9 +51,9 @@ export const createContract = mutation({
             args.xboxId == null &&
             args.playstationId == null &&
             args.switchId == null
-        ) return null;
+        ) return Status.BAD_REQUEST;
 
-        return await ctx.db.insert("contract", {
+        const contractId = await ctx.db.insert("contract", {
             epicId: args.epicId,
             steamId: args.steamId,
             xboxId: args.xboxId,
@@ -63,6 +61,8 @@ export const createContract = mutation({
             switchId: args.switchId,
             location: args.location,
         });
+
+        return await ctx.db.get("contract", contractId);
     },
 });
 
@@ -72,8 +72,9 @@ export const deleteContract = mutation({
     },
     handler: async (ctx, args) => {
         const contract = await ctx.db.get("contract", args.contractId);
-        if (contract == null) return;
+        if (contract == null) return Status.NOT_FOUND;
 
         await ctx.db.delete("contract", args.contractId);
+        return Status.OK;
     }
 });

@@ -1,6 +1,7 @@
 import { query } from "./_generated/server";
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { Status } from "./status";
 
 export const createMatch = mutation({
     args: {
@@ -9,9 +10,8 @@ export const createMatch = mutation({
         boardId: v.id("board"),
         teamIds: v.array(v.id("team")),
     },
-    returns: v.id("match"),
     handler: async (ctx, args) => {
-        return await ctx.db.insert("match", {
+        const thingy = await ctx.db.insert("match", {
             teamCount: args.teamIds.length,
             startTime: args.startTime,
             gracePeriodLength: args.gracePeriodLength,
@@ -19,12 +19,15 @@ export const createMatch = mutation({
             teamIds: args.teamIds,
             boardId: args.boardId,
         });
+
+        return await ctx.db.get("match", thingy);
     },
 });
 
 export const getMatches = query({
     handler: async (ctx, _) => {
-        const boards = ctx.db.query("match").collect();
+        const boards = await ctx.db.query("match").collect();
+        if (boards.length == 0) Status.NOT_FOUND;
         return boards;
     },
 });
@@ -35,6 +38,7 @@ export const getMatch = query({
     },
     handler: async (ctx, args) => {
         const match = await ctx.db.get("match", args.matchId);
+        if (match == null) return Status.NOT_FOUND;
         return match;
     },
 });
@@ -49,13 +53,14 @@ export const updateMatchStatus = mutation({
             v.literal("finished"),
         ),
     },
-    returns: v.null(),
     handler: async (ctx, args) => {
         const match = await ctx.db.get("match", args.matchId);
-        if (match == null) return;
+        if (match == null) return Status.NOT_FOUND;
 
         match.status = args.status;
         await ctx.db.patch("match", args.matchId, match);
+
+        return Status.OK;
     },
 });
 
@@ -65,8 +70,9 @@ export const deleteMatch = mutation({
     },
     handler: async (ctx, args) => {
         const match = await ctx.db.get("match", args.matchId);
-        if (match == null) return;
+        if (match == null) return Status.NOT_FOUND;
         await ctx.db.delete("match", args.matchId);
-    },
 
+        return Status.OK;
+    },
 });

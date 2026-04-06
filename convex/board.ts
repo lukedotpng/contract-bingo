@@ -1,6 +1,7 @@
 import { query } from "./_generated/server"
 import { mutation } from "./_generated/server"
 import { v } from "convex/values"
+import { Status } from "./status";
 import Rand from "rand-seed";
 
 export const createBoard = mutation({
@@ -10,13 +11,14 @@ export const createBoard = mutation({
             v.literal("5x5"),
         ),
     },
-    returns: v.id("board"),
     handler: async (ctx, args) => {
         const rand = new Rand();
-        return await ctx.db.insert("board", {
+        const board = await ctx.db.insert("board", {
             boardSize: args.boardSize,
             seed: rand.next(),
         });
+
+        return await ctx.db.get("board", board);
     },
 });
 
@@ -26,7 +28,7 @@ export const getBoard = query({
     },
     handler: async (ctx, args) => {
         const board = await ctx.db.get("board", args.boardId);
-        if (board == null) return null;
+        if (board == null) return Status.NOT_FOUND;
 
         return board;
     },
@@ -38,9 +40,10 @@ export const deleteBoard = mutation({
     },
     handler: async (ctx, args) => {
         const board = await ctx.db.get("board", args.boardId);
-        if (board == null) return null;
+        if (board == null) return Status.NOT_FOUND;
 
         await ctx.db.delete("board", args.boardId);
+        return Status.OK;
     },
 });
 
@@ -51,17 +54,19 @@ export const addBoardToContract = mutation({
     },
     handler: async (ctx, args) => {
         const board = await ctx.db.get("board", args.boardId);
-        if (board == null) return null;
+        if (board == null) return Status.NOT_FOUND;
 
         const btc = await ctx.db.get("boardToContract", args.btcId);
-        if (btc == null) return null;
+        if (btc == null) return Status.NOT_FOUND;
 
         if (board.boardToContracts == null) board.boardToContracts = [];
-        if (board.boardToContracts.includes(args.btcId)) return "boardToContract already exists within given board";
+        if (board.boardToContracts.includes(args.btcId)) return Status.BAD_REQUEST;
 
         board.boardToContracts.push(args.btcId);
         await ctx.db.patch("board", args.boardId, {
             boardToContracts: board.boardToContracts,
         });
+
+        return board.boardToContracts;
     },
 });
