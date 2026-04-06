@@ -37,9 +37,31 @@ export const deleteBoard = mutation({
         boardId: v.id("board"),
     },
     handler: async (ctx, args) => {
-        const board = await ctx.db.get("board", args.boardId)
+        const board = await ctx.db.get("board", args.boardId);
         if (board == null) return null;
 
         await ctx.db.delete("board", args.boardId);
+    },
+});
+
+export const addBoardToContract = mutation({
+    args: {
+        boardId: v.id("board"),
+        btcId: v.id("boardToContract"),
+    },
+    handler: async (ctx, args) => {
+        const board = await ctx.db.get("board", args.boardId);
+        if (board == null) return null;
+
+        const btc = await ctx.db.get("boardToContract", args.btcId);
+        if (btc == null) return null;
+
+        if (board.boardToContracts == null) board.boardToContracts = [];
+        if (board.boardToContracts.includes(args.btcId)) return "boardToContract already exists within given board";
+
+        board.boardToContracts.push(args.btcId);
+        await ctx.db.patch("board", args.boardId, {
+            boardToContracts: board.boardToContracts,
+        });
     },
 });
