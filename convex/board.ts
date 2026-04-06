@@ -70,3 +70,17 @@ export const addBoardToContract = mutation({
         return board.boardToContracts;
     },
 });
+
+export const generateNewSeed = mutation({
+    args: {
+        boardId: v.id("board"),
+    },
+    handler: async (ctx, args) => {
+        const board = await ctx.db.get(args.boardId);
+        if (board == null) return Status.NOT_FOUND;
+
+        await ctx.db.patch("board", args.boardId, {
+            seed: new Rand().next(),
+        });
+    },
+});
