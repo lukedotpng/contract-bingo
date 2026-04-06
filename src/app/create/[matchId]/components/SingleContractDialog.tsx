@@ -1,6 +1,7 @@
 import { ParseContractId } from "@/lib/ContractUtils";
 import { FormatContractLocation } from "@/lib/FormattingUtils";
 import { useMemo, useState } from "react";
+import ContractIdInput from "./ContractIdInput";
 
 export default function SingleContractDialog({
     ref,
@@ -167,118 +168,14 @@ function ContractIdField({
     UpdateValue: (updatedValue: string) => void;
     platform: "Epic" | "Steam" | "PlayStation" | "Xbox" | "Nintendo Switch";
 }) {
-    function UpdateContractInput(input: string) {
-        input = input.trim();
-        if (input === "") {
-            UpdateValue(input);
-            ValidateInput(input);
-            return;
-        }
-        if (!/[0-9-]*/.test(input)) {
-            return;
-        }
-        switch (platform) {
-            case "Epic":
-            case "Steam":
-                if (input[0] !== "1") {
-                    return;
-                }
-                break;
-            case "PlayStation":
-                if (input[0] !== "2") {
-                    return;
-                }
-                break;
-            case "Xbox":
-                if (input[0] !== "3") {
-                    return;
-                }
-                break;
-            case "Nintendo Switch":
-                if (input[0] !== "4") {
-                    return;
-                }
-                break;
-        }
-        if (input.length > 15) {
-            return;
-        }
-        UpdateValue(input);
-        ValidateInput(input);
-    }
-
-    const [validationError, setValidationError] = useState("");
-    function ValidateInput(input: string) {
-        if (input === "") {
-            setValidationError("");
-            return;
-        }
-        const parsedContract = ParseContractId(input);
-        if (parsedContract.error) {
-            setValidationError(parsedContract.error);
-            return;
-        }
-        switch (platform) {
-            case "Epic":
-            case "Steam":
-                if (input[0] !== "1") {
-                    setValidationError("Invalid platform ID");
-                }
-                break;
-            case "PlayStation":
-                if (input[0] !== "2") {
-                    setValidationError("Invalid platform ID");
-                }
-                break;
-            case "Xbox":
-                if (input[0] !== "3") {
-                    setValidationError("Invalid platform ID");
-                }
-                break;
-            case "Nintendo Switch":
-                if (input[0] !== "4") {
-                    setValidationError("*Invalid platform ID");
-                }
-                break;
-        }
-        setValidationError("");
-    }
-
-    let inputPlaceholder = "-XX-XXXXXXX-XX";
-    switch (platform) {
-        case "Epic":
-        case "Steam":
-            inputPlaceholder = "1" + inputPlaceholder;
-            break;
-        case "PlayStation":
-            inputPlaceholder = "2" + inputPlaceholder;
-            break;
-        case "Xbox":
-            inputPlaceholder = "3" + inputPlaceholder;
-            break;
-        case "Nintendo Switch":
-            inputPlaceholder = "4" + inputPlaceholder;
-            break;
-    }
-
     return (
-        <div className="grid ">
-            <label className="" htmlFor={`${platform}_id`}>
-                {platform}
-                <span className="pl-2 text-sm text-red-400">
-                    {validationError}
-                </span>
-            </label>
-            <input
-                className="w-full px-1 bg-slate-50 text-black border-2 border-slate-400 focus:outline-1 outline-slate-50 focus:outline-double "
-                type="text"
-                spellCheck={false}
-                name={`${platform}_id`}
+        <div className="grid">
+            <label htmlFor={`${platform}_id`}>{platform}</label>
+            <ContractIdInput
                 value={value}
-                onInput={(e: React.InputEvent<HTMLInputElement>) =>
-                    UpdateContractInput(e.currentTarget.value)
-                }
-                placeholder={inputPlaceholder}
+                UpdateValue={UpdateValue}
+                contractPlatform={platform}
+                className="w-full"
             />
         </div>
     );
