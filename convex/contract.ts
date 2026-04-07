@@ -1,6 +1,6 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { Status } from "./status";
+import { ResponseStatus } from "@/lib/globals";
 
 export const createContract = mutation({
     args: {
@@ -51,7 +51,7 @@ export const createContract = mutation({
             args.xboxId == null &&
             args.playstationId == null &&
             args.switchId == null
-        ) return Status.BAD_REQUEST;
+        ) return ResponseStatus.BAD_REQUEST;
 
         const contractId = await ctx.db.insert("contract", {
             epicId: args.epicId,
@@ -72,9 +72,9 @@ export const deleteContract = mutation({
     },
     handler: async (ctx, args) => {
         const contract = await ctx.db.get("contract", args.contractId);
-        if (contract == null) return Status.NOT_FOUND;
+        if (contract == null) return ResponseStatus.NOT_FOUND;
 
         await ctx.db.delete("contract", args.contractId);
-        return Status.OK;
+        return ResponseStatus.OK;
     }
 });

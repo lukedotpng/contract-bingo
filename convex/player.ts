@@ -1,7 +1,7 @@
 import { query } from "./_generated/server"
 import { mutation } from "./_generated/server"
 import { v } from "convex/values"
-import { Status } from "./status";
+import { ResponseStatus } from "@/lib/globals";
 
 export const createPlayer = mutation({
     args: {
@@ -30,7 +30,7 @@ export const getPlayer = query({
     },
     handler: async (ctx, args) => {
         const player = await ctx.db.get("player", args.playerId);
-        if (player == null) return Status.NOT_FOUND;
+        if (player == null) return ResponseStatus.NOT_FOUND;
 
         return player;
     },
@@ -50,14 +50,14 @@ export const updatePlayer = mutation({
     },
     handler: async (ctx, args) => {
         const player = await ctx.db.get("player", args.playerId);
-        if (player == null) return Status.NOT_FOUND;
+        if (player == null) return ResponseStatus.NOT_FOUND;
 
         await ctx.db.patch("player", args.playerId, {
             username: args.username,
             platform: args.platform,
         });
 
-        return Status.OK;
+        return ResponseStatus.OK;
     },
 });
 
@@ -67,9 +67,9 @@ export const deletePlayer = mutation({
     },
     handler: async (ctx, args) => {
         const player = await ctx.db.get("player", args.playerId);
-        if (player == null) return Status.NOT_FOUND;
+        if (player == null) return ResponseStatus.NOT_FOUND;
 
         await ctx.db.delete("player", args.playerId);
-        return Status.OK;
+        return ResponseStatus.OK;
     },
 });

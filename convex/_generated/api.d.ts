@@ -14,7 +14,6 @@ import type * as contract from "../contract.js";
 import type * as match from "../match.js";
 import type * as player from "../player.js";
 import type * as scoreSubmission from "../scoreSubmission.js";
-import type * as status from "../status.js";
 import type * as team from "../team.js";
 
 import type {
@@ -30,7 +29,6 @@ declare const fullApi: ApiFromModules<{
   match: typeof match;
   player: typeof player;
   scoreSubmission: typeof scoreSubmission;
-  status: typeof status;
   team: typeof team;
 }>;
 

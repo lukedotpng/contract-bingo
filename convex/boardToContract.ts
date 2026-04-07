@@ -2,7 +2,7 @@ import { Id } from "./_generated/dataModel";
 import { MutationCtx, query } from "./_generated/server";
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { Status } from "./status";
+import { ResponseStatus } from "@/lib/globals";
 
 async function boardContainsContract(ctx: MutationCtx, boardId: Id<"board">, contractId: Id<"contract">): Promise<boolean> {
     const existingBTC = await ctx.db
@@ -21,10 +21,10 @@ export const createBoardToContract = mutation({
     },
     handler: async (ctx, args) => {
         const boardId = await ctx.db.get("board", args.boardId);
-        if (boardId == null) return Status.NOT_FOUND;
+        if (boardId == null) return ResponseStatus.NOT_FOUND;
 
         const contractId = await ctx.db.get("contract", args.contractId);
-        if (contractId == null) return Status.NOT_FOUND;
+        if (contractId == null) return ResponseStatus.NOT_FOUND;
 
         if (await boardContainsContract(ctx, args.boardId, args.contractId)) return Status.BAD_REQUEST;
 
@@ -43,7 +43,7 @@ export const getBoardToContract = query({
     },
     handler: async (ctx, args) => {
         const btc = await ctx.db.get("boardToContract", args.btcId);
-        if (btc == null) return Status.NOT_FOUND;
+        if (btc == null) return ResponseStatus.NOT_FOUND;
 
         return btc;
     },
@@ -56,13 +56,13 @@ export const addBoardToContractSubmission = mutation({
     },
     handler: async (ctx, args) => {
         const btc = await ctx.db.get("boardToContract", args.btcId);
-        if (btc == null) return Status.NOT_FOUND;
+        if (btc == null) return ResponseStatus.NOT_FOUND;
 
         const submission = await ctx.db.get("scoreSubmission", args.submissionId);
-        if (submission == null) return Status.NOT_FOUND;
+        if (submission == null) return ResponseStatus.NOT_FOUND;
 
         if (btc.submissionIds == null) btc.submissionIds = [];
-        if (btc.submissionIds.includes(args.submissionId)) return Status.BAD_REQUEST;
+        if (btc.submissionIds.includes(args.submissionId)) return ResponseStatus.BAD_REQUEST;
 
         btc.submissionIds.push(args.submissionId);
 
@@ -70,7 +70,7 @@ export const addBoardToContractSubmission = mutation({
             submissionIds: btc.submissionIds,
         });
 
-        return Status.OK;
+        return ResponseStatus.OK;
     },
 });
 
@@ -81,10 +81,10 @@ export const removeBoardToContractSubmission = mutation({
     },
     handler: async (ctx, args) => {
         const btc = await ctx.db.get("boardToContract", args.btcId);
-        if (btc == null) return Status.NOT_FOUND;
+        if (btc == null) return ResponseStatus.NOT_FOUND;
 
         const submission = await ctx.db.get("scoreSubmission", args.submissionId);
-        if (submission == null) return Status.NOT_FOUND;
+        if (submission == null) return ResponseStatus.NOT_FOUND;
 
         if (btc.submissionIds == null) return "boardToContract doesn't have any submissions";
 
@@ -97,7 +97,7 @@ export const removeBoardToContractSubmission = mutation({
             submissionIds: btc.submissionIds,
         })
 
-        return Status.OK;
+        return ResponseStatus.OK;
     },
 });
 
@@ -107,9 +107,9 @@ export const deleteBoardToContract = mutation({
     },
     handler: async (ctx, args) => {
         const btc = await ctx.db.get("boardToContract", args.btcId);
-        if (btc == null) return Status.NOT_FOUND;
+        if (btc == null) return ResponseStatus.NOT_FOUND;
 
         await ctx.db.delete("boardToContract", args.btcId);
-        return Status.OK;
+        return ResponseStatus.OK;
     },
 });

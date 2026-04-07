@@ -2,7 +2,7 @@ import { mutation } from "./_generated/server";
 import { query } from "./_generated/server";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
-import { Status } from "./status";
+import { ResponseStatus } from "@/lib/globals";
 
 export const createTeams = mutation({
     args: {
@@ -28,7 +28,7 @@ export const getTeam = query({
     },
     handler: async (ctx, args) => {
         const team = await ctx.db.get("team", args.teamId);
-        if (team == null) return Status.NOT_FOUND;
+        if (team == null) return ResponseStatus.NOT_FOUND;
 
         return team;
     },
@@ -41,20 +41,20 @@ export const addPlayerToTeam = mutation({
     },
     handler: async (ctx, args) => {
         const team = await ctx.db.get("team", args.teamId);
-        if (team == null) return Status.NOT_FOUND;
+        if (team == null) return ResponseStatus.NOT_FOUND;
 
         const player = await ctx.db.get("player", args.playerId);
-        if (player == null) return Status.NOT_FOUND;
+        if (player == null) return ResponseStatus.NOT_FOUND;
 
         if (team.playerIds == null) team.playerIds = [];
-        if (team.playerIds.includes(args.playerId)) return Status.BAD_REQUEST;
+        if (team.playerIds.includes(args.playerId)) return ResponseStatus.BAD_REQUEST;
 
         team.playerIds.push(args.playerId);
         await ctx.db.patch("team", args.teamId, {
             playerIds: team.playerIds,
         });
 
-        return Status.OK;
+        return ResponseStatus.OK;
     },
 });
 
@@ -64,9 +64,9 @@ export const deleteTeam = mutation({
     },
     handler: async (ctx, args) => {
         const team = await ctx.db.get("team", args.teamId);
-        if (team == null) return Status.NOT_FOUND;
+        if (team == null) return ResponseStatus.NOT_FOUND;
 
         await ctx.db.delete("team", args.teamId);
-        return Status.OK;
+        return ResponseStatus.OK;
     },
 });

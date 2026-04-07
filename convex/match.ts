@@ -1,7 +1,7 @@
 import { query } from "./_generated/server";
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { Status } from "./status";
+import { ResponseStatus } from "@/lib/globals";
 import { Id } from "./_generated/dataModel";
 
 export const createMatch = mutation({
@@ -30,7 +30,7 @@ export const createMatch = mutation({
 export const getMatches = query({
     handler: async (ctx, _) => {
         const boards = await ctx.db.query("match").collect();
-        if (boards.length == 0) return Status.NOT_FOUND;
+        if (boards.length == 0) return ResponseStatus.NOT_FOUND;
         return boards;
     },
 });
@@ -41,12 +41,12 @@ export const getMatch = query({
     },
     handler: async (ctx, args) => {
         const match = await ctx.db.get("match", args.matchId);
-        if (match == null) return Status.NOT_FOUND;
+        if (match == null) return ResponseStatus.NOT_FOUND;
         return match;
     },
 });
 
-export const updateMatchStatus = mutation({
+export const updateMatchResponseStatus = mutation({
     args: {
         matchId: v.id("match"),
         status: v.union(
@@ -58,12 +58,12 @@ export const updateMatchStatus = mutation({
     },
     handler: async (ctx, args) => {
         const match = await ctx.db.get("match", args.matchId);
-        if (match == null) return Status.NOT_FOUND;
+        if (match == null) return ResponseStatus.NOT_FOUND;
 
         match.status = args.status;
         await ctx.db.patch("match", args.matchId, match);
 
-        return Status.OK;
+        return ResponseStatus.OK;
     },
 });
 
@@ -73,10 +73,10 @@ export const deleteMatch = mutation({
     },
     handler: async (ctx, args) => {
         const match = await ctx.db.get("match", args.matchId);
-        if (match == null) return Status.NOT_FOUND;
+        if (match == null) return ResponseStatus.NOT_FOUND;
         await ctx.db.delete("match", args.matchId);
 
-        return Status.OK;
+        return ResponseStatus.OK;
     },
 });
 
@@ -92,7 +92,7 @@ export const getAllJoinURIs = query({
     },
     handler: async (ctx, args) => {
         const match = await ctx.db.get("match", args.matchId);
-        if (match == null) return Status.NOT_FOUND;
+        if (match == null) return ResponseStatus.NOT_FOUND;
 
         return match.teamIds.map(teamId => joinURI(args.matchId, teamId));
     },
@@ -105,10 +105,10 @@ export const getJoinURI = mutation({
     },
     handler: async (ctx, args) => {
         const match = await ctx.db.get("match", args.matchId);
-        if (match == null) return Status.NOT_FOUND;
+        if (match == null) return ResponseStatus.NOT_FOUND;
 
         const team = await ctx.db.get("team", args.teamId);
-        if (team == null) return Status.NOT_FOUND;
+        if (team == null) return ResponseStatus.NOT_FOUND;
 
         return joinURI(args.matchId, args.teamId);
     },
