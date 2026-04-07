@@ -6,7 +6,7 @@ export default defineSchema({
     match: defineTable({
         teamCount: v.number(),
         // Start time in Unix time
-        startTime: v.int64(),
+        startTime: v.optional(v.int64()),
         gracePeriodLength: v.number(),
         status: v.union(
             v.literal("pending"),
@@ -16,6 +16,7 @@ export default defineSchema({
         ),
         teamIds: v.array(v.id("team")),
         boardId: v.id("board"),
+        adminId: v.string(),
     }).index("status", ["status"]),
     board: defineTable({
         boardSize: v.union(
