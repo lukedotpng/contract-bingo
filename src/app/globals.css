@@ -1,1 +1,18 @@
 @import "tailwindcss";
+
+@theme {
+    /* @link https://utopia.fyi/type/calculator?c=375,16,1.2,1280,18,1.2,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+
+    --text-xs: clamp(0.6944rem, 0.6585rem + 0.1535vw, 0.7813rem);
+    --text-sm: clamp(0.8333rem, 0.7902rem + 0.1842vw, 0.9375rem);
+    --text-base: clamp(1rem, 0.9482rem + 0.221vw, 1.125rem);
+    --text-lg: clamp(1.2rem, 1.1378rem + 0.2652vw, 1.35rem);
+    --text-xl: clamp(1.44rem, 1.3654rem + 0.3182vw, 1.62rem);
+    --text-2xl: clamp(1.728rem, 1.6385rem + 0.3819vw, 1.944rem);
+    --text-3xl: clamp(2.0736rem, 1.9662rem + 0.4583vw, 2.3328rem);
+    --text-4xl: clamp(2.4883rem, 2.3594rem + 0.5499vw, 2.7994rem);
+}
+
+html:has(dialog:open) {
+    overflow: hidden;
+}
