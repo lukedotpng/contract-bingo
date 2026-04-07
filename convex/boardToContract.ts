@@ -26,7 +26,7 @@ export const createBoardToContract = mutation({
         const contractId = await ctx.db.get("contract", args.contractId);
         if (contractId == null) return ResponseStatus.NOT_FOUND;
 
-        if (await boardContainsContract(ctx, args.boardId, args.contractId)) return Status.BAD_REQUEST;
+        if (await boardContainsContract(ctx, args.boardId, args.contractId)) return ResponseStatus.BAD_REQUEST;
 
         const btcId = await ctx.db.insert("boardToContract", {
             boardId: args.boardId,
@@ -88,7 +88,7 @@ export const removeBoardToContractSubmission = mutation({
 
         if (btc.submissionIds == null) return "boardToContract doesn't have any submissions";
 
-        if (btc.submissionIds == null || !btc.submissionIds.includes(args.submissionId)) return Status.BAD_REQUEST;
+        if (btc.submissionIds == null || !btc.submissionIds.includes(args.submissionId)) return ResponseStatus.BAD_REQUEST;
 
         const submissionIndex = btc.submissionIds.indexOf(args.submissionId);
         delete btc.submissionIds[submissionIndex];
