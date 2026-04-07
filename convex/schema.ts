@@ -92,7 +92,7 @@ export default defineSchema({
         platform: v.optional(v.union(
             v.literal("Epic"),
             v.literal("Steam"),
-            v.literal("PlayStation"),
+            v.literal("Playstation"),
             v.literal("Xbox"),
             v.literal("Nintendo Switch"),
         )),
