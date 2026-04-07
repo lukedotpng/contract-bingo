@@ -49,6 +49,18 @@ export const getBoardToContract = query({
     },
 });
 
+export const getAllBTCsFromBoard = query({
+    args: {
+        boardId: v.id("board"),
+    },
+    handler: async (ctx, args) => {
+        const board = await ctx.db.get("board", args.boardId);
+        if (board == null) return ResponseStatus.NOT_FOUND;
+
+        return await ctx.db.query("boardToContract").withIndex("byBoardContract", (q) => q.eq("boardId", args.boardId)).collect();
+    },
+});
+
 export const addBoardToContractSubmission = mutation({
     args: {
         btcId: v.id("boardToContract"),
