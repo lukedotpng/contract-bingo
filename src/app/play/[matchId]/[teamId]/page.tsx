@@ -4,9 +4,12 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/../convex/_generated/api";
 import { addBoardToContractSubmission } from "../../../../../convex/boardToContract";
 
-
-export default async function Page(args: Promise<{ matchId: Id<"match">, teamId: Id<"team"> }>) {
-    const { matchId, teamId } = await args;
+export default async function Page({
+    params,
+}: {
+    params: Promise<{ matchId: Id<"match">; teamId: Id<"team"> }>;
+}) {
+    const { matchId, teamId } = await params;
 
     const match = useQuery(api.match.getMatch, { matchId });
     const team = useQuery(api.team.getTeam, { teamId });
@@ -55,4 +58,11 @@ export default async function Page(args: Promise<{ matchId: Id<"match">, teamId:
         submissionId: submission._id,
     });
     */
+
+    return (
+        <div>
+            <p>{"MatchID: " + matchId}</p>
+            <p>{"TeamID: " + teamId}</p>
+        </div>
+    );
 }
