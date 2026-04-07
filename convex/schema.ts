@@ -24,7 +24,6 @@ export default defineSchema({
             v.literal("5x5"),
         ),
         seed: v.number(),
-        boardToContracts: v.optional(v.array(v.id("boardToContract"))),
     }),
     contract: defineTable({
         // At least one contract ID always needed, enforced in app level

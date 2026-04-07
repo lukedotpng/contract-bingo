@@ -47,30 +47,6 @@ export const deleteBoard = mutation({
     },
 });
 
-export const addBoardToContract = mutation({
-    args: {
-        boardId: v.id("board"),
-        btcId: v.id("boardToContract"),
-    },
-    handler: async (ctx, args) => {
-        const board = await ctx.db.get("board", args.boardId);
-        if (board == null) return Status.NOT_FOUND;
-
-        const btc = await ctx.db.get("boardToContract", args.btcId);
-        if (btc == null) return Status.NOT_FOUND;
-
-        if (board.boardToContracts == null) board.boardToContracts = [];
-        if (board.boardToContracts.includes(args.btcId)) return Status.BAD_REQUEST;
-
-        board.boardToContracts.push(args.btcId);
-        await ctx.db.patch("board", args.boardId, {
-            boardToContracts: board.boardToContracts,
-        });
-
-        return board.boardToContracts;
-    },
-});
-
 export const generateNewSeed = mutation({
     args: {
         boardId: v.id("board"),
