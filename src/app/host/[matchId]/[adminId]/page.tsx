@@ -9,7 +9,7 @@ export default async function Page(args: Promise<{ matchId: Id<"match">, adminId
 
     const match = useQuery(api.match.getMatch, { matchId });
     if (match == ResponseStatus.NOT_FOUND) return "match doesn't exist!";
-    if (match?.adminId != adminId) return "incorrect admin id!";
+    if (match!.adminId != adminId) return "incorrect admin id!";
 
     /* INFO: Submit additional contracts
 
