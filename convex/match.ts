@@ -10,6 +10,7 @@ export const createMatch = mutation({
         gracePeriodLength: v.number(),
         boardId: v.id("board"),
         teamIds: v.array(v.id("team")),
+        adminId: v.string(),
     },
     handler: async (ctx, args) => {
         const thingy = await ctx.db.insert("match", {
@@ -19,6 +20,7 @@ export const createMatch = mutation({
             status: "scheduled",
             teamIds: args.teamIds,
             boardId: args.boardId,
+            adminId: args.adminId,
         });
 
         return await ctx.db.get("match", thingy);
@@ -28,7 +30,7 @@ export const createMatch = mutation({
 export const getMatches = query({
     handler: async (ctx, _) => {
         const boards = await ctx.db.query("match").collect();
-        if (boards.length == 0) Status.NOT_FOUND;
+        if (boards.length == 0) return Status.NOT_FOUND;
         return boards;
     },
 });
