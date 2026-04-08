@@ -58,6 +58,24 @@ export const addPlayerToTeam = mutation({
     },
 });
 
+export const changeTeamColor = mutation({
+    args: {
+        teamId: v.id("team"),
+    },
+    handler: async (ctx, args) => {
+        const team = await ctx.db.get("team", args.teamId);
+        if (team == null) return ResponseStatus.NOT_FOUND;
+
+        const randColor = crypto.getRandomValues(new Uint8Array(6)).buffer;
+
+        await ctx.db.patch("team", args.teamId, {
+            color: randColor,
+        });
+
+        return ResponseStatus.OK;
+    },
+});
+
 export const deleteTeam = mutation({
     args: {
         teamId: v.id("team"),
