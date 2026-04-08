@@ -4,7 +4,6 @@ import { v } from "convex/values";
 // ID and creation time fields automatic
 export default defineSchema({
     match: defineTable({
-        teamCount: v.number(),
         // Start time in Unix time
         startTime: v.optional(v.int64()),
         gracePeriodLength: v.number(),

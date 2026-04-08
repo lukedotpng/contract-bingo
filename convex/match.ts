@@ -10,17 +10,15 @@ export const createMatch = mutation({
         gracePeriodLength: v.number(),
         boardId: v.id("board"),
         teamIds: v.array(v.id("team")),
-        adminId: v.string(),
     },
     handler: async (ctx, args) => {
         const thingy = await ctx.db.insert("match", {
-            teamCount: args.teamIds.length,
             startTime: args.startTime,
             gracePeriodLength: args.gracePeriodLength,
             status: "scheduled",
             teamIds: args.teamIds,
             boardId: args.boardId,
-            adminId: args.adminId,
+            adminId: crypto.randomUUID(),
         });
 
         return await ctx.db.get("match", thingy);
