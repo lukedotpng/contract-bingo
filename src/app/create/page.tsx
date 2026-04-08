@@ -26,16 +26,13 @@ export default function Page() {
                     boardSize={boardSize}
                     UpdateBoardSize={setBoardSize}
                 />
-                {/*Team Count*/}
                 <TeamCountSelection
                     teamCount={teamCount}
                     UpdateTeamCount={setTeamCount}
                     minCount={MIN_TEAM_COUNT}
                     maxCount={MAX_TEAM_COUNT}
                 />
-                {/*Contract ID Upload*/}
                 <ContractIdUpload AddContracts={AddContracts} />
-                {/* Contracts List */}
                 <ContractsList contracts={contracts} />
             </section>
             {/* Board */}
