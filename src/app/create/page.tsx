@@ -1,12 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import BoardSizeSelection from "./components/BoardSizeSelection";
 import TeamCountSelection from "./components/TeamCountSelection";
 import ContractIdUpload from "./components/ContractSubmission";
 import ContractsList from "./components/ContractsList";
 import BingoBoardPreview from "./components/BingoBoardPreview";
-import TeamLinksList from "./components/TeamLinksList";
 
 export default function Page() {
     const [boardSize, setBoardSize] = useState(4);
@@ -14,20 +13,6 @@ export default function Page() {
     const MAX_TEAM_COUNT = 10;
     const MIN_TEAM_COUNT = 2;
     const [teamCount, setTeamCount] = useState(2);
-    // TEMP
-    const teamLinks: string[] = useMemo(() => {
-        const teamLinks: string[] = [];
-        for (let i = 0; i < teamCount; i++) {
-            teamLinks.push(
-                "https://bingo.luke.town/" +
-                    crypto.randomUUID() +
-                    "/" +
-                    crypto.randomUUID(),
-            );
-        }
-        return teamLinks;
-    }, [teamCount]);
-    // TEMP
     const [contracts, setContracts] = useState<Contract[]>([]);
     function AddContracts(newContracts: Contract[]) {
         setContracts((oldContracts) => [...oldContracts, ...newContracts]);
@@ -48,7 +33,6 @@ export default function Page() {
                     minCount={MIN_TEAM_COUNT}
                     maxCount={MAX_TEAM_COUNT}
                 />
-                <TeamLinksList teamLinks={teamLinks} />
                 {/*Contract ID Upload*/}
                 <ContractIdUpload AddContracts={AddContracts} />
                 {/* Contracts List */}
