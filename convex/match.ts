@@ -1,29 +1,68 @@
-import { query } from "./_generated/server";
+import { MutationCtx, query } from "./_generated/server";
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { ResponseStatus } from "@/lib/globals";
 import { Id } from "./_generated/dataModel";
 
-export const createMatch = mutation({
+// Creates match, along with board and team ids in one mutation
+export const createInitialMatch = mutation({
     args: {
-        startTime: v.int64(),
+        startTime: v.optional(v.number()),
         gracePeriodLength: v.number(),
-        boardId: v.id("board"),
-        teamIds: v.array(v.id("team")),
+        boardSize: v.union(v.literal("4x4"), v.literal("5x5")),
+        teamCount: v.number(),
     },
     handler: async (ctx, args) => {
-        const thingy = await ctx.db.insert("match", {
-            startTime: args.startTime,
-            gracePeriodLength: args.gracePeriodLength,
-            status: "scheduled",
-            teamIds: args.teamIds,
-            boardId: args.boardId,
-            adminId: crypto.randomUUID(),
-        });
-
-        return await ctx.db.get("match", thingy);
+        const boardId = await createBoardForMatchHelper(ctx, args.boardSize);
+        const teamIds = await createTeamIdsForMatchHelper(ctx, args.teamCount);
+        const matchId = await createMatchHelper(ctx, 10, boardId, teamIds);
+        return matchId;
     },
 });
+
+async function createBoardForMatchHelper(
+    ctx: MutationCtx,
+    boardSize: "4x4" | "5x5",
+) {
+    const boardId = await ctx.db.insert("board", {
+        boardSize: boardSize,
+        seed: Math.random(),
+    });
+    return boardId;
+}
+
+async function createTeamIdsForMatchHelper(
+    ctx: MutationCtx,
+    teamCount: number,
+) {
+    const teamIds: Id<"team">[] = [];
+    for (let i = 0; i < teamCount; i++) {
+        const randColor = crypto.getRandomValues(new Uint8Array(6)).buffer;
+        const id: Id<"team"> = await ctx.db.insert("team", {
+            color: randColor,
+        });
+        teamIds.push(id);
+    }
+
+    return teamIds;
+}
+
+async function createMatchHelper(
+    ctx: MutationCtx,
+    gracePeriodLength: number,
+    boardId: Id<"board">,
+    teamIds: Id<"team">[],
+) {
+    const match = await ctx.db.insert("match", {
+        gracePeriodLength: gracePeriodLength,
+        teamIds: teamIds,
+        boardId: boardId,
+        adminId: crypto.randomUUID(),
+        status: "pending",
+    });
+
+    return match;
+}
 
 export const getMatches = query({
     handler: async (ctx, _) => {
@@ -92,7 +131,7 @@ export const getAllJoinURIs = query({
         const match = await ctx.db.get("match", args.matchId);
         if (match == null) return ResponseStatus.NOT_FOUND;
 
-        return match.teamIds.map(teamId => joinURI(args.matchId, teamId));
+        return match.teamIds.map((teamId) => joinURI(args.matchId, teamId));
     },
 });
 

@@ -2,27 +2,27 @@ import { FormatContractLocation } from "@/lib/FormattingUtils";
 
 export default function ContractsList({
     contracts,
+    RemoveContract,
 }: {
     contracts: Contract[];
+    RemoveContract: (contractId: string) => void;
 }) {
     return (
-        <div className="max-w-195 grid lg:grid-cols-2 grid-cols-1 gap-2 align-baseline">
+        <div className="grid gap-2 align-baseline overflow-scroll">
             {contracts.map((contract) => (
                 <details
                     key={contract.id}
                     name="contract"
-                    className="relative w-full max-w-96 bg-slate-700 border-2 border-slate-700 select-none sm:text-base text-sm"
+                    className="group relative w-full border-2 border-slate-600 select-none text-base open:border-slate-200 has-[button:hover]:border-red-400 bg-center"
+                    style={{
+                        backgroundImage: `linear-gradient(to right, oklch(from var(--color-slate-800) l c h), oklch(from var(--color-slate-700) l c h / 40%)),url(/${contract.location}_background.webp)`,
+                    }}
                 >
-                    <summary
-                        className="h-full p-1 font-bold cursor-default bg-center"
-                        style={{
-                            backgroundImage: `linear-gradient(to right, oklch(from var(--color-slate-800) l c h), oklch(from var(--color-slate-600) l c h / 40%)),url(/${contract.location}_background.webp)`,
-                        }}
-                    >
+                    <summary className="p-1 font-bold cursor-default group-open:bg-slate-700/70">
                         {FormatContractLocation(contract.location)}
                     </summary>
 
-                    <ul className="absolute w-full z-10 top-full -left-0.5 border-2 border-slate-600 border-t-0 box-content">
+                    <ul className="">
                         <ContractIdEntry
                             id={contract.epicId}
                             platform={"Epic"}
@@ -44,6 +44,14 @@ export default function ContractsList({
                             platform={"Switch"}
                         />
                     </ul>
+                    <div className="w-full py-1 grid place-content-center bg-slate-800">
+                        <button
+                            className=" text-center hover:underline"
+                            onClick={() => RemoveContract(contract.id)}
+                        >
+                            {"Remove"}
+                        </button>
+                    </div>
                 </details>
             ))}
         </div>
@@ -58,7 +66,7 @@ function ContractIdEntry({
     platform: "Epic" | "Steam" | "PlayStation" | "Xbox" | "Switch";
 }) {
     return (
-        <li className="p-0.5 odd:bg-slate-800 even:bg-slate-700">
+        <li className="p-0.5 bg-slate-700/70 border-b-2 last:border-none border-slate-300">
             <p className="text-xs">{platform}</p>
             {id !== undefined && (
                 <p className="select-text align-text-top">{id}</p>

@@ -8,7 +8,7 @@ export default function BoardSizeSelection({
     return (
         <div>
             <p className="font-bold">{"Board Size"}</p>
-            <div className="flex font-bold max-w-96 w-full p-0.5 bg-slate-700 gap-1">
+            <div className="flex font-bold w-full p-0.5 bg-slate-700 gap-1">
                 <button
                     role="checkbox"
                     aria-checked={boardSize === 4}
