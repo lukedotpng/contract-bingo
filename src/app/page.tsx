@@ -17,12 +17,12 @@ export default function Home() {
                     <BlankBingoSquare className="hover:bg-red-400" />
                     <BlankBingoSquare className="hover:bg-blue-400" />
                     <BlankBingoSquare className="hover:bg-yellow-400" />
-                    <button
-                        className="aspect-square text-2xl bg-slate-700 border-2 border-slate-300 hover:underline"
-                        onClick={CreateMatch}
+                    <a
+                        href="/create"
+                        className="aspect-square text-2xl bg-slate-700 border-2 border-slate-300 hover:underline content-center text-center"
                     >
                         {"Create match"}
-                    </button>
+                    </a>
                     <BlankBingoSquare className="hover:bg-green-400" />
                     <BlankBingoSquare className="hover:bg-red-400" />
                     <BlankBingoSquare className="hover:bg-blue-400" />
