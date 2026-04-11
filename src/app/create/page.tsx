@@ -17,6 +17,11 @@ export default function Page() {
     function AddContracts(newContracts: Contract[]) {
         setContracts((oldContracts) => [...oldContracts, ...newContracts]);
     }
+    function RemoveContract(contractId: string) {
+        setContracts((contracts) =>
+            contracts.filter((c) => c.id !== contractId),
+        );
+    }
 
     return (
         <main className="flex flex-row-reverse flex-wrap justify-end">
@@ -33,7 +38,10 @@ export default function Page() {
                     maxCount={MAX_TEAM_COUNT}
                 />
                 <ContractIdUpload AddContracts={AddContracts} />
-                <ContractsList contracts={contracts} />
+                <ContractsList
+                    contracts={contracts}
+                    RemoveContract={RemoveContract}
+                />
             </section>
             {/* Board */}
             <section className="p-2 w-180">
