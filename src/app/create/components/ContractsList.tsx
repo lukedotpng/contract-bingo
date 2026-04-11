@@ -8,53 +8,49 @@ export default function ContractsList({
     RemoveContract: (contractId: string) => void;
 }) {
     return (
-        <div className="grid lg:grid-cols-2 grid-cols-1 gap-2 align-baseline">
+        <div className="grid gap-2 align-baseline overflow-scroll">
             {contracts.map((contract) => (
                 <details
                     key={contract.id}
                     name="contract"
-                    className="relative w-full bg-slate-700 border-2 border-slate-600 select-none sm:text-base text-sm has-[button:hover]:border-red-400"
+                    className="group relative w-full border-2 border-slate-600 select-none text-base open:border-slate-200 has-[button:hover]:border-red-400 bg-center"
+                    style={{
+                        backgroundImage: `linear-gradient(to right, oklch(from var(--color-slate-800) l c h), oklch(from var(--color-slate-700) l c h / 40%)),url(/${contract.location}_background.webp)`,
+                    }}
                 >
-                    <summary
-                        className="h-full p-1 font-bold cursor-default bg-center"
-                        style={{
-                            backgroundImage: `linear-gradient(to right, oklch(from var(--color-slate-800) l c h), oklch(from var(--color-slate-600) l c h / 40%)),url(/${contract.location}_background.webp)`,
-                        }}
-                    >
+                    <summary className="p-1 font-bold cursor-default group-open:bg-slate-700/70">
                         {FormatContractLocation(contract.location)}
                     </summary>
 
-                    <div className="absolute w-full z-10 top-full -left-0.5 bg-slate-700 border-2 border-slate-600 border-t-0 box-content has-[button:hover]:border-red-400">
-                        <ul>
-                            <ContractIdEntry
-                                id={contract.epicId}
-                                platform={"Epic"}
-                            />
-                            <ContractIdEntry
-                                id={contract.steamId}
-                                platform={"Steam"}
-                            />
-                            <ContractIdEntry
-                                id={contract.playstationId}
-                                platform={"PlayStation"}
-                            />
-                            <ContractIdEntry
-                                id={contract.xboxId}
-                                platform={"Xbox"}
-                            />
-                            <ContractIdEntry
-                                id={contract.switchId}
-                                platform={"Switch"}
-                            />
-                        </ul>
-                        <div className="w-full py-1 grid place-content-center">
-                            <button
-                                className="py-1 px-2 bg-slate-700 border-2 border-slate-600 text-center hover:underline"
-                                onClick={() => RemoveContract(contract.id)}
-                            >
-                                {"Remove"}
-                            </button>
-                        </div>
+                    <ul className="">
+                        <ContractIdEntry
+                            id={contract.epicId}
+                            platform={"Epic"}
+                        />
+                        <ContractIdEntry
+                            id={contract.steamId}
+                            platform={"Steam"}
+                        />
+                        <ContractIdEntry
+                            id={contract.playstationId}
+                            platform={"PlayStation"}
+                        />
+                        <ContractIdEntry
+                            id={contract.xboxId}
+                            platform={"Xbox"}
+                        />
+                        <ContractIdEntry
+                            id={contract.switchId}
+                            platform={"Switch"}
+                        />
+                    </ul>
+                    <div className="w-full py-1 grid place-content-center bg-slate-800">
+                        <button
+                            className=" text-center hover:underline"
+                            onClick={() => RemoveContract(contract.id)}
+                        >
+                            {"Remove"}
+                        </button>
                     </div>
                 </details>
             ))}
@@ -70,7 +66,7 @@ function ContractIdEntry({
     platform: "Epic" | "Steam" | "PlayStation" | "Xbox" | "Switch";
 }) {
     return (
-        <li className="p-0.5 odd:bg-slate-800 even:bg-slate-700">
+        <li className="p-0.5 bg-slate-700/70 border-b-2 last:border-none border-slate-300">
             <p className="text-xs">{platform}</p>
             {id !== undefined && (
                 <p className="select-text align-text-top">{id}</p>

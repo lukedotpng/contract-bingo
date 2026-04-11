@@ -26,7 +26,7 @@ export default function Page() {
     return (
         <main className="flex flex-row-reverse flex-wrap justify-center">
             {/* Settings */}
-            <section className="p-2 flex-1 flex flex-col gap-4 box-content max-w-96">
+            <section className="p-2 flex-1 flex flex-col gap-4 max-w-96 max-h-180">
                 <BoardSizeSelection
                     boardSize={boardSize}
                     UpdateBoardSize={setBoardSize}
@@ -44,7 +44,7 @@ export default function Page() {
                 />
             </section>
             {/* Board */}
-            <section className="p-2 w-180">
+            <section className="p-2 w-180 h-full">
                 <BingoBoardPreview size={boardSize} contracts={contracts} />
             </section>
         </main>
