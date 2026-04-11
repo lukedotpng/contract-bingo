@@ -8,12 +8,12 @@ export default function ContractsList({
     RemoveContract: (contractId: string) => void;
 }) {
     return (
-        <div className="max-w-195 grid lg:grid-cols-2 grid-cols-1 gap-2 align-baseline">
+        <div className="grid lg:grid-cols-2 grid-cols-1 gap-2 align-baseline">
             {contracts.map((contract) => (
                 <details
                     key={contract.id}
                     name="contract"
-                    className="relative w-full max-w-96 bg-slate-700 border-2 border-slate-600 select-none sm:text-base text-sm has-[button:hover]:border-red-400"
+                    className="relative w-full bg-slate-700 border-2 border-slate-600 select-none sm:text-base text-sm has-[button:hover]:border-red-400"
                 >
                     <summary
                         className="h-full p-1 font-bold cursor-default bg-center"

@@ -24,9 +24,9 @@ export default function Page() {
     }
 
     return (
-        <main className="flex flex-row-reverse flex-wrap justify-end">
+        <main className="flex flex-row-reverse flex-wrap justify-center">
             {/* Settings */}
-            <section className="p-2 flex-1 flex flex-col gap-4 box-content">
+            <section className="p-2 flex-1 flex flex-col gap-4 box-content max-w-96">
                 <BoardSizeSelection
                     boardSize={boardSize}
                     UpdateBoardSize={setBoardSize}
