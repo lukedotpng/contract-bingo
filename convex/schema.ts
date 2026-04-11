@@ -5,7 +5,7 @@ import { v } from "convex/values";
 export default defineSchema({
     match: defineTable({
         // Start time in Unix time
-        startTime: v.optional(v.int64()),
+        startTime: v.optional(v.number()),
         gracePeriodLength: v.number(),
         status: v.union(
             v.literal("pending"),
@@ -18,10 +18,7 @@ export default defineSchema({
         adminId: v.string(),
     }).index("status", ["status"]),
     board: defineTable({
-        boardSize: v.union(
-            v.literal("4x4"),
-            v.literal("5x5"),
-        ),
+        boardSize: v.union(v.literal("4x4"), v.literal("5x5")),
         seed: v.number(),
     }),
     contract: defineTable({
@@ -69,8 +66,7 @@ export default defineSchema({
         boardId: v.id("board"),
         contractId: v.id("contract"),
         submissionIds: v.optional(v.array(v.id("scoreSubmission"))),
-    })
-        .index("byBoardContract", ["boardId", "contractId"]),
+    }).index("byBoardContract", ["boardId", "contractId"]),
     team: defineTable({
         color: v.bytes(),
         playerIds: v.optional(v.array(v.id("player"))),

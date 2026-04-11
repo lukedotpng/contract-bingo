@@ -13,10 +13,16 @@ export default function Main({
     adminId: string;
 }) {
     const match = useQuery(api.match.getMatch, { matchId });
+    const matchContracts = useQuery(
+        api.boardToContract.getAllContractsFromBoard,
+        match !== undefined && match !== ResponseStatus.NOT_FOUND
+            ? { boardId: match.boardId }
+            : "skip",
+    );
     if (match == ResponseStatus.NOT_FOUND) {
         throw new Error("Match doesn't exist!");
     }
-    if (match!.adminId != adminId) {
+    if (match !== undefined && match.adminId !== adminId) {
         throw new Error("Invalid admin ID");
     }
 
@@ -60,14 +66,25 @@ export default function Main({
     match.gracePeriodLength = gracePeriodArg;
     */
 
-    if (match === undefined) {
-        <p>{"Loading..."}</p>;
+    if (match === undefined || matchContracts === undefined) {
+        return <p>{"Loading..."}</p>;
     }
 
     return (
         <div>
             <p>{"MatchID: " + matchId}</p>
             <p>{"AdminID: " + adminId}</p>
+            <ul>
+                {matchContracts.map((contract) => (
+                    <li key={contract._id} className="border-2">
+                        <p>{`Epic: ${contract.epicId ?? "No contract ID"}`}</p>
+                        <p>{`Steam: ${contract.steamId ?? "No contract ID"}`}</p>
+                        <p>{`PlayStation: ${contract.playstationId ?? "No contract ID"}`}</p>
+                        <p>{`Xbox: ${contract.xboxId ?? "No contract ID"}`}</p>
+                        <p>{`Switch: ${contract.switchId ?? "No contract ID"}`}</p>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 }
