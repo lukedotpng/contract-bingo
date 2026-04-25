@@ -73,7 +73,13 @@ export const getAllContractsFromBoard = query({
         const contracts = await Promise.all(
             contractIds.map((id) => ctx.db.get("contract", id)),
         );
-        return contracts.filter((contract) => contract !== null);
+        const filteredContracts = contracts.filter(
+            (contract) => contract !== null,
+        );
+        const sortedContracts = filteredContracts.sort((a, b) =>
+            a._id > b._id ? -1 : 1,
+        );
+        return sortedContracts;
     },
 });
 

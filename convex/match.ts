@@ -3,6 +3,7 @@ import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { ResponseStatus } from "@/lib/globals";
 import { Id } from "./_generated/dataModel";
+import { GenerateSeed } from "@/lib/BoardUtils";
 
 // Creates match, along with board and team ids in one mutation
 export const createInitialMatch = mutation({
@@ -26,7 +27,7 @@ async function createBoardForMatchHelper(
 ) {
     const boardId = await ctx.db.insert("board", {
         boardSize: boardSize,
-        seed: Math.random(),
+        seed: GenerateSeed(15),
     });
     return boardId;
 }

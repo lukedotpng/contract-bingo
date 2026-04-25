@@ -19,7 +19,7 @@ export default defineSchema({
     }).index("status", ["status"]),
     board: defineTable({
         boardSize: v.union(v.literal("4x4"), v.literal("5x5")),
-        seed: v.number(),
+        seed: v.string(),
     }),
     contract: defineTable({
         // At least one contract ID always needed, enforced in app level

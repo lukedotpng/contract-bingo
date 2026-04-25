@@ -1,8 +1,8 @@
-import { query } from "./_generated/server"
-import { mutation } from "./_generated/server"
-import { v } from "convex/values"
+import { query } from "./_generated/server";
+import { mutation } from "./_generated/server";
+import { v } from "convex/values";
 import { ResponseStatus } from "@/lib/globals";
-import Rand from "rand-seed";
+import { GenerateSeed } from "@/lib/BoardUtils";
 
 export const createBoard = mutation({
     args: {
@@ -12,10 +12,9 @@ export const createBoard = mutation({
         ),
     },
     handler: async (ctx, args) => {
-        const rand = new Rand();
         const board = await ctx.db.insert("board", {
             boardSize: args.boardSize,
-            seed: rand.next(),
+            seed: GenerateSeed(15),
         });
 
         return await ctx.db.get("board", board);
@@ -56,7 +55,7 @@ export const generateNewSeed = mutation({
         if (board == null) return ResponseStatus.NOT_FOUND;
 
         await ctx.db.patch("board", args.boardId, {
-            seed: new Rand().next(),
+            seed: GenerateSeed(15),
         });
     },
 });
