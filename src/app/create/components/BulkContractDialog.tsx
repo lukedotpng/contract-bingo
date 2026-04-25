@@ -51,6 +51,9 @@ export default function BulkContractDialog({
             ref={ref}
             closedby="any"
             className="m-auto p-2 bg-slate-800 border-2 border-slate-600 backdrop:bg-slate-950/50 w-full max-w-[min(40rem,95%)] h-100 text-white"
+            onClose={() => {
+                setBulkContractInput("");
+            }}
         >
             <form
                 className="flex flex-col gap-2 h-full"
