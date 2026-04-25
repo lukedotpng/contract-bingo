@@ -12,8 +12,10 @@ export const createTeams = mutation({
         const teamIds: Id<"team">[] = [];
         const response = [];
         for (let i = 0; i < args.quantity; i++) {
-            const randColor = crypto.getRandomValues(new Uint8Array(6)).buffer;
-            const id: Id<"team"> = await ctx.db.insert("team", { color: randColor });
+            const randColor = crypto.getRandomValues(new Uint8Array(3)).buffer;
+            const id: Id<"team"> = await ctx.db.insert("team", {
+                color: randColor,
+            });
             teamIds.push(id);
             response.push(await ctx.db.get("team", id));
         }
@@ -66,7 +68,7 @@ export const changeTeamColor = mutation({
         const team = await ctx.db.get("team", args.teamId);
         if (team == null) return ResponseStatus.NOT_FOUND;
 
-        const randColor = crypto.getRandomValues(new Uint8Array(6)).buffer;
+        const randColor = crypto.getRandomValues(new Uint8Array(3)).buffer;
 
         await ctx.db.patch("team", args.teamId, {
             color: randColor,

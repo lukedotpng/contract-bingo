@@ -38,7 +38,7 @@ async function createTeamIdsForMatchHelper(
 ) {
     const teamIds: Id<"team">[] = [];
     for (let i = 0; i < teamCount; i++) {
-        const randColor = crypto.getRandomValues(new Uint8Array(6)).buffer;
+        const randColor = crypto.getRandomValues(new Uint8Array(3)).buffer;
         const id: Id<"team"> = await ctx.db.insert("team", {
             color: randColor,
         });
