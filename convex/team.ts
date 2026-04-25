@@ -36,6 +36,24 @@ export const getTeam = query({
     },
 });
 
+export const getTeams = query({
+    args: {
+        teamIds: v.array(v.id("team")),
+    },
+    handler: async (ctx, args) => {
+        const teams = [];
+        for (const teamId of args.teamIds) {
+            const team = await ctx.db.get("team", teamId);
+            if (team == null) {
+                return ResponseStatus.NOT_FOUND;
+            }
+            teams.push(team);
+        }
+
+        return teams;
+    },
+});
+
 export const addPlayerToTeam = mutation({
     args: {
         teamId: v.id("team"),
@@ -49,7 +67,8 @@ export const addPlayerToTeam = mutation({
         if (player == null) return ResponseStatus.NOT_FOUND;
 
         if (team.playerIds == null) team.playerIds = [];
-        if (team.playerIds.includes(args.playerId)) return ResponseStatus.BAD_REQUEST;
+        if (team.playerIds.includes(args.playerId))
+            return ResponseStatus.BAD_REQUEST;
 
         team.playerIds.push(args.playerId);
         await ctx.db.patch("team", args.teamId, {
