@@ -97,11 +97,6 @@ export default function Main({
         }
     }
 
-    /* INFO: Change all team colors
-
-    match.teamIds.forEach(teamId => useMutation(api.team.changeTeamColor)({ teamId: teamId }));
-    */
-
     /* INFO: Set start time
 
     match.startTime = startTimeArg;
@@ -123,13 +118,9 @@ export default function Main({
 
     return (
         <main>
-            <div className="flex flex-row-reverse flex-wrap justify-center">
+            <div className="flex flex-row-reverse flex-wrap justify-end">
                 {/* Settings */}
                 <section className="p-2 flex-1 flex flex-col gap-4 max-w-100">
-                    <ContractSubmission
-                        AddSingleContract={AddSingleContract}
-                        AddBulkContracts={AddBulkContracts}
-                    />
                     <button
                         className="py-2 bg-slate-700 font-bold hover:underline"
                         onClick={RegenerateSeed}
@@ -144,6 +135,10 @@ export default function Main({
                         size={board.boardSize === "4x4" ? 4 : 5}
                         seed={board.seed}
                         contracts={matchContracts}
+                    />
+                    <ContractSubmission
+                        AddSingleContract={AddSingleContract}
+                        AddBulkContracts={AddBulkContracts}
                     />
                     <ContractsList
                         contracts={matchContracts}
