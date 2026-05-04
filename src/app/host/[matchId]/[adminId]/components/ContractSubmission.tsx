@@ -50,7 +50,6 @@ export default function ContractSubmission({
 
     return (
         <div>
-            <p className="font-bold">{"Contracts"}</p>
             <div className="flex font-bold gap-2 ">
                 <button
                     className="flex-1 py-2 bg-slate-700 hover:underline"
