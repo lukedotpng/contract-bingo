@@ -8,6 +8,8 @@ import BingoBoardPreview from "./BingoBoardPreview";
 import ContractsList from "./ContractsList";
 import ContractSubmission from "./ContractSubmission";
 import TeamsList from "./TeamsList";
+import AddContract from "./AddContract";
+import BulkAddContracts from "./BulkAddContracts";
 
 export default function Main({
     matchId,
@@ -23,6 +25,10 @@ export default function Main({
         api.contract.createBulkContractsWithBoard,
     );
     const boardSeedMutation = useMutation(api.board.generateNewSeed);
+    const startTimeMutation = useMutation(api.match.setStartTime);
+    const gracePeriodLengthMutation = useMutation(
+        api.match.setGracePeriodLength,
+    );
 
     const match = useQuery(api.match.getMatch, { matchId });
     const board = useQuery(
@@ -120,13 +126,7 @@ export default function Main({
         <main>
             <div className="flex flex-row-reverse flex-wrap justify-end">
                 {/* Settings */}
-                <section className="p-2 flex-1 flex flex-col gap-4 max-w-100">
-                    <button
-                        className="py-2 bg-slate-700 font-bold hover:underline"
-                        onClick={RegenerateSeed}
-                    >
-                        {"Regenerate Board Seed"}
-                    </button>
+                <section className="p-2 flex-1 ">
                     <TeamsList matchId={match._id} teams={teams} />
                 </section>
                 {/* Board */}
@@ -136,10 +136,16 @@ export default function Main({
                         seed={board.seed}
                         contracts={matchContracts}
                     />
-                    <ContractSubmission
-                        AddSingleContract={AddSingleContract}
-                        AddBulkContracts={AddBulkContracts}
-                    />
+                    <div className="flex font-bold gap-2">
+                        <AddContract AddContract={AddSingleContract} />
+                        <BulkAddContracts AddContracts={AddBulkContracts} />
+                        <button
+                            className="flex-1 py-2 bg-slate-700 hover:underline"
+                            onClick={RegenerateSeed}
+                        >
+                            {"Shuffle Board"}
+                        </button>
+                    </div>
                     <ContractsList
                         contracts={matchContracts}
                         RemoveContract={() => console.log("removing contract")}

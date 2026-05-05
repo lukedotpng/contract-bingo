@@ -24,9 +24,9 @@ export default function TeamsList({
     }
 
     return (
-        <div className="w-full max-w-96">
+        <div className="w-full ">
             <p className="font-bold">{"Team Links"}</p>
-            <ol className="w-full grid gap-1">
+            <ol className="w-full grid gap-1 grid-cols-2">
                 {teams.map((team, index) => {
                     const teamLink =
                         window.location.origin +

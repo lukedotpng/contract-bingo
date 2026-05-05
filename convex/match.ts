@@ -151,3 +151,25 @@ export const getJoinURI = mutation({
         return joinURI(args.matchId, args.teamId);
     },
 });
+
+export const setStartTime = mutation({
+    args: {
+        matchId: v.id("match"),
+        startTime: v.number(),
+    },
+    handler: async (ctx, args) => {
+        ctx.db.patch("match", args.matchId, { startTime: args.startTime });
+    },
+});
+
+export const setGracePeriodLength = mutation({
+    args: {
+        matchId: v.id("match"),
+        gracePeriodLength: v.number(),
+    },
+    handler: async (ctx, args) => {
+        ctx.db.patch("match", args.matchId, {
+            gracePeriodLength: args.gracePeriodLength,
+        });
+    },
+});
