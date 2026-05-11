@@ -126,7 +126,7 @@ export default function Main({
         <main>
             <div className="flex flex-row-reverse flex-wrap justify-end">
                 {/* Settings */}
-                <section className="p-2 flex-1 ">
+                <section className="p-2 flex-1">
                     <TeamsList matchId={match._id} teams={teams} />
                 </section>
                 {/* Board */}
