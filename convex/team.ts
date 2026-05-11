@@ -1,7 +1,7 @@
 import { mutation } from "./_generated/server";
 import { query } from "./_generated/server";
 import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 import { ResponseStatus } from "@/lib/globals";
 
 export const createTeams = mutation({
@@ -51,6 +51,22 @@ export const getTeams = query({
         }
 
         return teams;
+    },
+});
+
+export const getPlayers = query({
+    args: {
+        playerIds: v.array(v.id("player")),
+    },
+    handler: async (ctx, args) => {
+        const players: Doc<"player">[] = [];
+        for (const playerId of args.playerIds) {
+            const player = await ctx.db.get("player", playerId);
+            if (player !== null) {
+                players.push(player);
+            }
+        }
+        return players;
     },
 });
 
