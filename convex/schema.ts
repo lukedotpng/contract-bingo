@@ -84,13 +84,14 @@ export default defineSchema({
         .index("status", ["status"]),
     player: defineTable({
         username: v.string(),
-        platform: v.optional(v.union(
-            v.literal("Epic"),
-            v.literal("Steam"),
-            v.literal("Playstation"),
-            v.literal("Xbox"),
-            v.literal("Nintendo Switch"),
-        )),
-    })
-        .index("username", ["username"]),
+        platform: v.optional(
+            v.union(
+                v.literal("Epic"),
+                v.literal("Steam"),
+                v.literal("Playstation"),
+                v.literal("Xbox"),
+                v.literal("Nintendo Switch"),
+            ),
+        ),
+    }).index("username", ["username"]),
 });

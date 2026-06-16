@@ -30,7 +30,10 @@ export const getScoreSubmission = query({
         submissionId: v.id("scoreSubmission"),
     },
     handler: async (ctx, args) => {
-        const submission = await ctx.db.get("scoreSubmission", args.submissionId);
+        const submission = await ctx.db.get(
+            "scoreSubmission",
+            args.submissionId,
+        );
         if (submission == null) return ResponseStatus.NOT_FOUND;
 
         return submission;
@@ -40,14 +43,14 @@ export const getScoreSubmission = query({
 export const updateScoreSubmissionResponseStatus = mutation({
     args: {
         submissionId: v.id("scoreSubmission"),
-        status: v.union(
-            v.literal("valid"),
-            v.literal("rejected"),
-        ),
+        status: v.union(v.literal("valid"), v.literal("rejected")),
         rejectedReason: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
-        const submission = await ctx.db.get("scoreSubmission", args.submissionId);
+        const submission = await ctx.db.get(
+            "scoreSubmission",
+            args.submissionId,
+        );
         if (submission == null) return ResponseStatus.NOT_FOUND;
 
         await ctx.db.patch("scoreSubmission", args.submissionId, {
@@ -64,7 +67,10 @@ export const deleteScoreSubmission = mutation({
         submissionId: v.id("scoreSubmission"),
     },
     handler: async (ctx, args) => {
-        const submission = await ctx.db.get("scoreSubmission", args.submissionId);
+        const submission = await ctx.db.get(
+            "scoreSubmission",
+            args.submissionId,
+        );
         if (submission == null) return ResponseStatus.NOT_FOUND;
 
         await ctx.db.delete("scoreSubmission", args.submissionId);
