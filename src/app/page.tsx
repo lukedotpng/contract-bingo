@@ -1,11 +1,6 @@
 "use client";
 
 export default function Home() {
-    // TODO
-    function CreateMatch() {
-        console.log("bleh");
-    }
-
     return (
         <>
             <header className="h-15 bg-slate-800 px-4 grid items-center">
