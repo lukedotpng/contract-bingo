@@ -72,6 +72,7 @@ export default defineSchema({
         playerIds: v.optional(v.array(v.id("player"))),
     }),
     scoreSubmission: defineTable({
+        matchId: v.id("match"),
         teamId: v.id("team"),
         playerId: v.id("player"),
         score: v.number(),
@@ -79,6 +80,7 @@ export default defineSchema({
         status: v.union(v.literal("valid"), v.literal("rejected")),
         rejectedReason: v.optional(v.string()),
     })
+        .index("matchId", ["matchId"])
         .index("playerId", ["playerId"])
         .index("timestamp", ["timestamp"])
         .index("status", ["status"]),
