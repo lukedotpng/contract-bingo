@@ -3,7 +3,14 @@
 import { api } from "@/../convex/_generated/api";
 import { Id } from "@/../convex/_generated/dataModel";
 import { ResponseStatus } from "@/lib/globals";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
+import BingoBoardPreview from "./BingoBoardPreview";
+import ContractsList from "./ContractsList";
+import TeamsList from "./TeamsList";
+import AddContract from "./AddContract";
+import BulkAddContracts from "./BulkAddContracts";
+import MatchTimeManagement from "./MatchTimeManagement";
+import SubmissionLog from "./SubmissionLog";
 
 export default function Main({
     matchId,
@@ -12,79 +19,134 @@ export default function Main({
     matchId: Id<"match">;
     adminId: string;
 }) {
+    const singleContractMutation = useMutation(
+        api.contract.createSingleContractWithBoard,
+    );
+    const bulkContractMutation = useMutation(
+        api.contract.createBulkContractsWithBoard,
+    );
+    const boardSeedMutation = useMutation(api.board.generateNewSeed);
+    const startTimeMutation = useMutation(api.match.setStartTime);
+    const gracePeriodLengthMutation = useMutation(
+        api.match.setGracePeriodLength,
+    );
+
     const match = useQuery(api.match.getMatch, { matchId });
+    const board = useQuery(
+        api.board.getBoard,
+        match !== undefined && match !== ResponseStatus.NOT_FOUND
+            ? { boardId: match.boardId }
+            : "skip",
+    );
     const matchContracts = useQuery(
         api.boardToContract.getAllContractsFromBoard,
         match !== undefined && match !== ResponseStatus.NOT_FOUND
             ? { boardId: match.boardId }
             : "skip",
     );
-    if (match == ResponseStatus.NOT_FOUND) {
+    const teams = useQuery(
+        api.team.getTeams,
+        match !== undefined && match !== ResponseStatus.NOT_FOUND
+            ? { teamIds: match.teamIds }
+            : "skip",
+    );
+    if (match === ResponseStatus.NOT_FOUND) {
         throw new Error("Match doesn't exist!");
+    }
+    if (board === ResponseStatus.NOT_FOUND) {
+        throw new Error("Board doesn't exist!");
     }
     if (match !== undefined && match.adminId !== adminId) {
         throw new Error("Invalid admin ID");
     }
+    if (teams !== undefined && teams === ResponseStatus.NOT_FOUND) {
+        throw new Error("Unable to fetch teams");
+    }
 
-    /* INFO: Submit additional contracts
+    function AddSingleContract(contract: Contract) {
+        if (board !== ResponseStatus.NOT_FOUND && board !== undefined) {
+            const contractNoId = {
+                epicId: contract.epicId,
+                steamId: contract.steamId,
+                playstationId: contract.playstationId,
+                xboxId: contract.xboxId,
+                switchId: contract.switchId,
+                location: contract.location,
+            };
+            singleContractMutation({
+                boardId: board._id,
+                contract: contractNoId,
+            });
+        }
+    }
+    function AddBulkContracts(contracts: Contract[]) {
+        if (board !== ResponseStatus.NOT_FOUND && board !== undefined) {
+            const contractsNoId = contracts.map((c) => {
+                return {
+                    epicId: c.epicId,
+                    steamId: c.steamId,
+                    playstationId: c.playstationId,
+                    xboxId: c.xboxId,
+                    switchId: c.switchId,
+                    location: c.location,
+                };
+            });
+            bulkContractMutation({
+                boardId: board._id,
+                contracts: contractsNoId,
+            });
+        }
+    }
 
-    const createContract = useMutation(api.contract.createContract);
-    const contract = await createContract({
-        epicId: epicIdArg,
-        steamId: steamIdArg,
-        xboxId: xboxIdArg,
-        playstationId: playstationIdArg,
-        switchId: switchIdArg,
-        location: locationArg,
-    });
+    function RegenerateSeed() {
+        if (board !== ResponseStatus.NOT_FOUND && board !== undefined) {
+            boardSeedMutation({ boardId: board._id });
+        }
+    }
 
-    if (contract == ResponseStatus.BAD_REQUEST) return "need to specify at least one contract id";
-
-    const createBoardToContract = useMutation(api.boardToContract.createBoardToContract);
-    var status = await createBoardToContract({ boardId: match.boardId, contractId: contract!._id });
-    if (status == ResponseStatus.NOT_FOUND) return "contract doesn't exist";
-    */
-
-    /* INFO: Regenerate board seed
-
-    const generateNewSeed = useMutation(api.board.generateNewSeed);
-    generateNewSeed({ boardId: match.boardId });
-    */
-
-    /* INFO: Change all team colors
-
-    match.teamIds.forEach(teamId => useMutation(api.team.changeTeamColor)({ teamId: teamId }));
-    */
-
-    /* INFO: Set start time
-
-    match.startTime = startTimeArg;
-    */
-
-    /* INFO: Edit grace period length
-
-    match.gracePeriodLength = gracePeriodArg;
-    */
-
-    if (match === undefined || matchContracts === undefined) {
+    if (
+        match === undefined ||
+        board === undefined ||
+        matchContracts === undefined ||
+        teams === undefined
+    ) {
         return <p>{"Loading..."}</p>;
     }
 
     return (
-        <div>
-            <p>{"MatchID: " + matchId}</p>
-            <p>{"AdminID: " + adminId}</p>
-            <ul>
-                {matchContracts.map((contract) => (
-                    <li key={contract._id} className="border-2">
-                        <p>{`Epic: ${contract.epicId ?? "No contract ID"}`}</p>
-                        <p>{`Steam: ${contract.steamId ?? "No contract ID"}`}</p>
-                        <p>{`PlayStation: ${contract.playstationId ?? "No contract ID"}`}</p>
-                        <p>{`Xbox: ${contract.xboxId ?? "No contract ID"}`}</p>
-                        <p>{`Switch: ${contract.switchId ?? "No contract ID"}`}</p>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <main>
+            <div className="flex flex-row-reverse flex-wrap justify-end m-2 sm:m-4 gap-2">
+                {/* Settings */}
+                <section className=" flex-1">
+                    <MatchTimeManagement match={match} />
+                    <TeamsList matchId={match._id} teams={teams} />
+                    <SubmissionLog match={match} />
+                </section>
+                {/* Board */}
+                <section className="grid gap-2 w-180 h-full">
+                    <BingoBoardPreview
+                        size={board.boardSize === "4x4" ? 4 : 5}
+                        seed={board.seed}
+                        contracts={matchContracts}
+                    />
+                    <div className="flex font-bold gap-2">
+                        <AddContract AddContract={AddSingleContract} />
+                        <BulkAddContracts AddContracts={AddBulkContracts} />
+                        <button
+                            className="flex-1 ml-[10%] py-2 bg-slate-700 hover:underline"
+                            onClick={RegenerateSeed}
+                        >
+                            {"Shuffle Board"}
+                        </button>
+                    </div>
+                    <ContractsList
+                        contracts={matchContracts}
+                        seed={board.seed}
+                        boardSize={board.boardSize === "4x4" ? 4 : 5}
+                        RemoveContract={() => console.log("removing contract")}
+                    />
+                </section>
+            </div>
+        </main>
     );
 }

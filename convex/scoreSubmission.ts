@@ -5,6 +5,7 @@ import { ResponseStatus } from "@/lib/globals";
 
 export const createScoreSubmission = mutation({
     args: {
+        matchId: v.id("match"),
         teamId: v.id("team"),
         playerId: v.id("player"),
         score: v.number(),
@@ -13,6 +14,7 @@ export const createScoreSubmission = mutation({
     handler: async (ctx, args) => {
         const DEFAULT_STATUS: "valid" | "rejected" = "valid";
         const submissionId = await ctx.db.insert("scoreSubmission", {
+            matchId: args.matchId,
             teamId: args.teamId,
             playerId: args.playerId,
             score: args.score,
@@ -30,24 +32,41 @@ export const getScoreSubmission = query({
         submissionId: v.id("scoreSubmission"),
     },
     handler: async (ctx, args) => {
-        const submission = await ctx.db.get("scoreSubmission", args.submissionId);
+        const submission = await ctx.db.get(
+            "scoreSubmission",
+            args.submissionId,
+        );
         if (submission == null) return ResponseStatus.NOT_FOUND;
 
         return submission;
     },
-})
+});
+
+export const getMatchScoreSubmissions = query({
+    args: {
+        matchId: v.id("match"),
+    },
+    handler: async (ctx, args) => {
+        const submissions = ctx.db
+            .query("scoreSubmission")
+            .withIndex("matchId", (q) => q.eq("matchId", args.matchId))
+            .collect();
+
+        return submissions;
+    },
+});
 
 export const updateScoreSubmissionResponseStatus = mutation({
     args: {
         submissionId: v.id("scoreSubmission"),
-        status: v.union(
-            v.literal("valid"),
-            v.literal("rejected"),
-        ),
+        status: v.union(v.literal("valid"), v.literal("rejected")),
         rejectedReason: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
-        const submission = await ctx.db.get("scoreSubmission", args.submissionId);
+        const submission = await ctx.db.get(
+            "scoreSubmission",
+            args.submissionId,
+        );
         if (submission == null) return ResponseStatus.NOT_FOUND;
 
         await ctx.db.patch("scoreSubmission", args.submissionId, {
@@ -64,7 +83,10 @@ export const deleteScoreSubmission = mutation({
         submissionId: v.id("scoreSubmission"),
     },
     handler: async (ctx, args) => {
-        const submission = await ctx.db.get("scoreSubmission", args.submissionId);
+        const submission = await ctx.db.get(
+            "scoreSubmission",
+            args.submissionId,
+        );
         if (submission == null) return ResponseStatus.NOT_FOUND;
 
         await ctx.db.delete("scoreSubmission", args.submissionId);

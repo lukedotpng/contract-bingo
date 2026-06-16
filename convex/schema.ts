@@ -19,7 +19,7 @@ export default defineSchema({
     }).index("status", ["status"]),
     board: defineTable({
         boardSize: v.union(v.literal("4x4"), v.literal("5x5")),
-        seed: v.number(),
+        seed: v.string(),
     }),
     contract: defineTable({
         // At least one contract ID always needed, enforced in app level
@@ -72,6 +72,7 @@ export default defineSchema({
         playerIds: v.optional(v.array(v.id("player"))),
     }),
     scoreSubmission: defineTable({
+        matchId: v.id("match"),
         teamId: v.id("team"),
         playerId: v.id("player"),
         score: v.number(),
@@ -79,18 +80,20 @@ export default defineSchema({
         status: v.union(v.literal("valid"), v.literal("rejected")),
         rejectedReason: v.optional(v.string()),
     })
+        .index("matchId", ["matchId"])
         .index("playerId", ["playerId"])
         .index("timestamp", ["timestamp"])
         .index("status", ["status"]),
     player: defineTable({
         username: v.string(),
-        platform: v.optional(v.union(
-            v.literal("Epic"),
-            v.literal("Steam"),
-            v.literal("Playstation"),
-            v.literal("Xbox"),
-            v.literal("Nintendo Switch"),
-        )),
-    })
-        .index("username", ["username"]),
+        platform: v.optional(
+            v.union(
+                v.literal("Epic"),
+                v.literal("Steam"),
+                v.literal("Playstation"),
+                v.literal("Xbox"),
+                v.literal("Nintendo Switch"),
+            ),
+        ),
+    }).index("username", ["username"]),
 });

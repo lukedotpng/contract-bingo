@@ -69,7 +69,7 @@ export default function BulkContractDialog({
                     <button
                         type="button"
                         className="py-1 px-4 bg-slate-700 hover:underline"
-                        onClick={CloseDialog}
+                        onClick={() => CloseDialog()}
                     >
                         {"Close"}
                     </button>

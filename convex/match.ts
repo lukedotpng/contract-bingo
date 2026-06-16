@@ -3,6 +3,7 @@ import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { ResponseStatus } from "@/lib/globals";
 import { Id } from "./_generated/dataModel";
+import { GenerateSeed } from "@/lib/BoardUtils";
 
 // Creates match, along with board and team ids in one mutation
 export const createInitialMatch = mutation({
@@ -26,7 +27,7 @@ async function createBoardForMatchHelper(
 ) {
     const boardId = await ctx.db.insert("board", {
         boardSize: boardSize,
-        seed: Math.random(),
+        seed: GenerateSeed(15),
     });
     return boardId;
 }
@@ -37,7 +38,7 @@ async function createTeamIdsForMatchHelper(
 ) {
     const teamIds: Id<"team">[] = [];
     for (let i = 0; i < teamCount; i++) {
-        const randColor = crypto.getRandomValues(new Uint8Array(6)).buffer;
+        const randColor = crypto.getRandomValues(new Uint8Array(3)).buffer;
         const id: Id<"team"> = await ctx.db.insert("team", {
             color: randColor,
         });
@@ -148,5 +149,27 @@ export const getJoinURI = mutation({
         if (team == null) return ResponseStatus.NOT_FOUND;
 
         return joinURI(args.matchId, args.teamId);
+    },
+});
+
+export const setStartTime = mutation({
+    args: {
+        matchId: v.id("match"),
+        startTime: v.number(),
+    },
+    handler: async (ctx, args) => {
+        ctx.db.patch("match", args.matchId, { startTime: args.startTime });
+    },
+});
+
+export const setGracePeriodLength = mutation({
+    args: {
+        matchId: v.id("match"),
+        gracePeriodLength: v.number(),
+    },
+    handler: async (ctx, args) => {
+        ctx.db.patch("match", args.matchId, {
+            gracePeriodLength: args.gracePeriodLength,
+        });
     },
 });

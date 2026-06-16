@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-    /* @link https://utopia.fyi/type/calculator?c=375,16,1.2,1280,18,1.2,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+    /* @link https://utopia.fyi/type/calculator?c=375,16,1.2,1280,18,1.2,5,3,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
 
+    --text-xxs: clamp(0.5787rem, 0.5487rem + 0.1279vw, 0.651rem);
     --text-xs: clamp(0.6944rem, 0.6585rem + 0.1535vw, 0.7813rem);
     --text-sm: clamp(0.8333rem, 0.7902rem + 0.1842vw, 0.9375rem);
     --text-base: clamp(1rem, 0.9482rem + 0.221vw, 1.125rem);
@@ -13,6 +14,194 @@
     --text-4xl: clamp(2.4883rem, 2.3594rem + 0.5499vw, 2.7994rem);
 }
 
+:root {
+    --highlighted-marker-bg: var(--color-slate-500);
+    --highlighted-marker-text: white;
+}
+
 html:has(dialog:open) {
     overflow: hidden;
+}
+
+.board-size-4 {
+    grid-template-columns: auto repeat(4, minmax(0, 1fr));
+    grid-template-rows: auto repeat(4, minmax(0, 1fr));
+}
+
+.board-size-5 {
+    grid-template-columns: auto repeat(5, minmax(0, 1fr));
+    grid-template-rows: auto repeat(5, minmax(0, 1fr));
+}
+
+.row-marker[data-row="1"]:has(~ .bingo-card[data-row="1"]:hover) {
+    color: var(--highlighted-marker-text);
+    background-color: var(--highlighted-marker-bg);
+}
+.row-marker[data-row="2"]:has(~ .bingo-card[data-row="2"]:hover) {
+    color: var(--highlighted-marker-text);
+    background-color: var(--highlighted-marker-bg);
+}
+.row-marker[data-row="3"]:has(~ .bingo-card[data-row="3"]:hover) {
+    color: var(--highlighted-marker-text);
+    background-color: var(--highlighted-marker-bg);
+}
+.row-marker[data-row="4"]:has(~ .bingo-card[data-row="4"]:hover) {
+    color: var(--highlighted-marker-text);
+    background-color: var(--highlighted-marker-bg);
+}
+.row-marker[data-row="5"]:has(~ .bingo-card[data-row="5"]:hover) {
+    color: var(--highlighted-marker-text);
+    background-color: var(--highlighted-marker-bg);
+}
+
+.col-marker[data-col="1"]:has(~ .bingo-card[data-col="1"]:hover) {
+    color: var(--highlighted-marker-text);
+    background-color: var(--highlighted-marker-bg);
+}
+.col-marker[data-col="2"]:has(~ .bingo-card[data-col="2"]:hover) {
+    color: var(--highlighted-marker-text);
+    background-color: var(--highlighted-marker-bg);
+}
+.col-marker[data-col="3"]:has(~ .bingo-card[data-col="3"]:hover) {
+    color: var(--highlighted-marker-text);
+    background-color: var(--highlighted-marker-bg);
+}
+.col-marker[data-col="4"]:has(~ .bingo-card[data-col="4"]:hover) {
+    color: var(--highlighted-marker-text);
+    background-color: var(--highlighted-marker-bg);
+}
+.col-marker[data-col="5"]:has(~ .bingo-card[data-col="5"]:hover) {
+    color: var(--highlighted-marker-text);
+    background-color: var(--highlighted-marker-bg);
+}
+
+.bingo-card-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-position: center;
+}
+
+.bingo-card-bg-freeform_training::before {
+    background-image: url("/freeform_training_background.webp");
+}
+
+.bingo-card-bg-the_final_test::before {
+    background-image: url("/the_final_test_background.webp");
+}
+
+.bingo-card-bg-the_showstopper::before {
+    background-image: url("/the_showstopper_background.webp");
+}
+
+.bingo-card-bg-world_of_tomorrow::before {
+    background-image: url("/world_of_tomorrow_background.webp");
+}
+
+.bingo-card-bg-a_gilded_cage::before {
+    background-image: url("/a_gilded_cage_background.webp");
+}
+
+.bingo-card-bg-club_27::before {
+    background-image: url("/club_27_background.webp");
+}
+
+.bingo-card-bg-freedom_fighters::before {
+    background-image: url("/freedom_fighters_background.webp");
+}
+
+.bingo-card-bg-situs_inversus::before {
+    background-image: url("/situs_inversus_background.webp");
+}
+
+.bingo-card-bg-nightcall::before {
+    background-image: url("/nightcall_background.webp");
+}
+
+.bingo-card-bg-the_finish_line::before {
+    background-image: url("/the_finish_line_background.webp");
+}
+
+.bingo-card-bg-three-headed_serpent::before {
+    background-image: url("/three-headed_serpent_background.webp");
+}
+
+.bingo-card-bg-chasing_a_ghost::before {
+    background-image: url("/chasing_a_ghost_background.webp");
+}
+
+.bingo-card-bg-another_life::before {
+    background-image: url("/another_life_background.webp");
+}
+
+.bingo-card-bg-shadows_in_the_water::before {
+    background-image: url("/shadows_in_the_water_background.webp");
+}
+
+.bingo-card-bg-the_ark_society::before {
+    background-image: url("/the_ark_society_background.webp");
+}
+
+.bingo-card-bg-golden_handshake::before {
+    background-image: url("/golden_handshake_background.webp");
+}
+
+.bingo-card-bg-the_last_resort::before {
+    background-image: url("/the_last_resort_background.webp");
+}
+
+.bingo-card-bg-on_top_of_the_world::before {
+    background-image: url("/on_top_of_the_world_background.webp");
+}
+
+.bingo-card-bg-death_in_the_family::before {
+    background-image: url("/death_in_the_family_background.webp");
+}
+
+.bingo-card-bg-apex_predator::before {
+    background-image: url("/apex_predator_background.webp");
+}
+
+.bingo-card-bg-end_of_an_era::before {
+    background-image: url("/end_of_an_era_background.webp");
+}
+
+.bingo-card-bg-the_farewell::before {
+    background-image: url("/the_farewell_background.webp");
+}
+
+.bingo-card-bg-holiday_hoarders::before {
+    background-image: url("/holiday_hoarders_background.webp");
+}
+
+.bingo-card-bg-landslide::before {
+    background-image: url("/landslide_background.webp");
+}
+
+.bingo-card-bg-the_icon::before {
+    background-image: url("/the_icon_background.webp");
+}
+
+.bingo-card-bg-the_author::before {
+    background-image: url("/the_author_background.webp");
+}
+
+.bingo-card-bg-a_house_built_on_sand::before {
+    background-image: url("/a_house_built_on_sand_background.webp");
+}
+
+.bingo-card-bg-the_source::before {
+    background-image: url("/the_source_background.webp");
+}
+
+.bingo-card-bg-patient_zero::before {
+    background-image: url("/patient_zero_background.webp");
+}
+
+.bingo-card-bg-hokkaido_snow_festival::before {
+    background-image: url("/hokkaido_snow_festival_background.webp");
+}
+
+.bingo-card-bg-the_dartmoor_garden_show::before {
+    background-image: url("/the_dartmoor_garden_show_background.webp");
 }
