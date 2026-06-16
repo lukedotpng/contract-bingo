@@ -40,3 +40,5 @@ type ContractLocation =
     | "patient_zero"
     | "hokkaido_snow_festival"
     | "the_dartmoor_garden_show";
+
+type Platform = "Epic" | "Steam" | "Playstation" | "Xbox" | "Nintendo Switch";

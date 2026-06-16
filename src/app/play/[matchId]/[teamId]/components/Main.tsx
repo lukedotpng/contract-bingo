@@ -4,6 +4,8 @@ import { api } from "@/../convex/_generated/api";
 import { Id } from "@/../convex/_generated/dataModel";
 import { ResponseStatus } from "@/lib/globals";
 import { useQuery } from "convex/react";
+import BingoBoard from "./BingoBoard";
+import { useLocalState } from "@/lib/useLocalState";
 
 export default function Main({
     matchId,
@@ -15,21 +17,25 @@ export default function Main({
     const match = useQuery(api.match.getMatch, {
         matchId: matchId,
     });
+    const matchContracts = useQuery(
+        api.boardToContract.getAllContractsFromBoard,
+        match !== undefined && match !== ResponseStatus.NOT_FOUND
+            ? { boardId: match.boardId }
+            : "skip",
+    );
+    const board = useQuery(
+        api.board.getBoard,
+        match !== undefined && match !== ResponseStatus.NOT_FOUND
+            ? { boardId: match.boardId }
+            : "skip",
+    );
     const team = useQuery(api.team.getTeam, { teamId: teamId });
 
-    if (match === ResponseStatus.NOT_FOUND) {
-        throw new Error("Match doesn't exist!");
-    }
-    if (team === ResponseStatus.NOT_FOUND) {
-        throw new Error("Team doesn't exist!");
-    }
-    if (
-        match !== undefined &&
-        team !== undefined &&
-        !match.teamIds.includes(team._id)
-    ) {
-        throw new Error("Team doesn't exist in this match!");
-    }
+    const [playerName, setPlayerName] = useLocalState<{
+        id: Id<"player">;
+        name: string;
+        platform: Platform;
+    } | null>("player", null);
 
     /* INFO: Create player & set name and platform
 
@@ -71,14 +77,49 @@ export default function Main({
     });
     */
 
+    if (match === ResponseStatus.NOT_FOUND) {
+        throw new Error("Match doesn't exist!");
+    }
+    if (board === ResponseStatus.NOT_FOUND) {
+        throw new Error("Board doesn't exist!");
+    }
+    if (team === ResponseStatus.NOT_FOUND) {
+        throw new Error("Team doesn't exist!");
+    }
+    if (
+        match !== undefined &&
+        team !== undefined &&
+        !match.teamIds.includes(team._id)
+    ) {
+        throw new Error("Team doesn't exist in this match!");
+    }
+
+    if (
+        match === undefined ||
+        matchContracts === undefined ||
+        team === undefined ||
+        board === undefined
+    ) {
+        return <p>{"Loading..."}</p>;
+    }
+
     if (match === undefined && team === undefined) {
         return <p>{"Loading..."}</p>;
     }
 
     return (
-        <div>
-            <p>{"MatchID: " + matchId}</p>
-            <p>{"TeamID: " + teamId}</p>
-        </div>
+        <main>
+            <div className="flex flex-row-reverse flex-wrap justify-end m-2 sm:m-4 gap-2">
+                <section className="flex-1"></section>
+                {/* Board */}
+                <section className="grid gap-2 w-180 h-full">
+                    <BingoBoard
+                        size={board.boardSize === "4x4" ? 4 : 5}
+                        seed={board.seed}
+                        contracts={matchContracts}
+                    />
+                </section>
+            </div>
+        </main>
     );
 }
