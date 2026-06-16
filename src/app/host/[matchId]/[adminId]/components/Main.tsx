@@ -6,7 +6,6 @@ import { ResponseStatus } from "@/lib/globals";
 import { useMutation, useQuery } from "convex/react";
 import BingoBoardPreview from "./BingoBoardPreview";
 import ContractsList from "./ContractsList";
-import ContractSubmission from "./ContractSubmission";
 import TeamsList from "./TeamsList";
 import AddContract from "./AddContract";
 import BulkAddContracts from "./BulkAddContracts";
