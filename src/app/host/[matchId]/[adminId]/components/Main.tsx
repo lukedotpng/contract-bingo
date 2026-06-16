@@ -9,6 +9,8 @@ import ContractsList from "./ContractsList";
 import TeamsList from "./TeamsList";
 import AddContract from "./AddContract";
 import BulkAddContracts from "./BulkAddContracts";
+import MatchTimeManagement from "./MatchTimeManagement";
+import SubmissionLog from "./SubmissionLog";
 
 export default function Main({
     matchId,
@@ -102,16 +104,6 @@ export default function Main({
         }
     }
 
-    /* INFO: Set start time
-
-    match.startTime = startTimeArg;
-    */
-
-    /* INFO: Edit grace period length
-
-    match.gracePeriodLength = gracePeriodArg;
-    */
-
     if (
         match === undefined ||
         board === undefined ||
@@ -123,13 +115,15 @@ export default function Main({
 
     return (
         <main>
-            <div className="flex flex-row-reverse flex-wrap justify-end">
+            <div className="flex flex-row-reverse flex-wrap justify-end m-2 sm:m-4 gap-2">
                 {/* Settings */}
-                <section className="p-2 flex-1">
+                <section className=" flex-1">
+                    <MatchTimeManagement match={match} />
                     <TeamsList matchId={match._id} teams={teams} />
+                    <SubmissionLog match={match} />
                 </section>
                 {/* Board */}
-                <section className="grid gap-2 p-2 w-180 h-full">
+                <section className="grid gap-2 w-180 h-full">
                     <BingoBoardPreview
                         size={board.boardSize === "4x4" ? 4 : 5}
                         seed={board.seed}
@@ -139,7 +133,7 @@ export default function Main({
                         <AddContract AddContract={AddSingleContract} />
                         <BulkAddContracts AddContracts={AddBulkContracts} />
                         <button
-                            className="flex-1 py-2 bg-slate-700 hover:underline"
+                            className="flex-1 ml-[10%] py-2 bg-slate-700 hover:underline"
                             onClick={RegenerateSeed}
                         >
                             {"Shuffle Board"}
@@ -147,6 +141,8 @@ export default function Main({
                     </div>
                     <ContractsList
                         contracts={matchContracts}
+                        seed={board.seed}
+                        boardSize={board.boardSize === "4x4" ? 4 : 5}
                         RemoveContract={() => console.log("removing contract")}
                     />
                 </section>

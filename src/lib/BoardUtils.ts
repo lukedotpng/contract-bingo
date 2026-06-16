@@ -8,3 +8,13 @@ export function GenerateSeed(length: number) {
     }
     return seed;
 }
+
+export function IndexToPositionString(index: number, boardSize: number) {
+    if (index >= boardSize ** 2) {
+        return "";
+    }
+    const letters = ["A", "B", "C", "D", "E"];
+    const letter = letters[Math.floor(index / boardSize)];
+    const number = (index % boardSize) + 1;
+    return letter + number;
+}
