@@ -34,3 +34,15 @@ export function FormatContractLocation(location: ContractLocation) {
     ]);
     return LocationFormatMap.get(location);
 }
+
+export function SecondsToTimeString(totalSeconds: number) {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    const minutesString =
+        minutes < 10 ? (minutes === 0 ? "00" : "0" + minutes) : minutes + "";
+    const secondsString =
+        seconds < 10 ? (seconds === 0 ? "00" : "0" + seconds) : seconds + "";
+
+    return minutesString + ":" + secondsString;
+}

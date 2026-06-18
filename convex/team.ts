@@ -1,8 +1,8 @@
 import { mutation } from "./_generated/server";
 import { query } from "./_generated/server";
 import { v } from "convex/values";
-import { Doc, Id } from "./_generated/dataModel";
-import { ResponseStatus } from "@/lib/globals";
+import { Id } from "./_generated/dataModel";
+import { ResponseStatus, TEAM_COLORS_ARRAY } from "@/lib/globals";
 
 export const createTeams = mutation({
     args: {
@@ -12,9 +12,9 @@ export const createTeams = mutation({
         const teamIds: Id<"team">[] = [];
         const response = [];
         for (let i = 0; i < args.quantity; i++) {
-            const randColor = crypto.getRandomValues(new Uint8Array(3)).buffer;
+            const teamColor = TEAM_COLORS_ARRAY[i];
             const id: Id<"team"> = await ctx.db.insert("team", {
-                color: randColor,
+                color: teamColor,
             });
             teamIds.push(id);
             response.push(await ctx.db.get("team", id));
@@ -54,18 +54,16 @@ export const getTeams = query({
     },
 });
 
-export const getPlayers = query({
+export const getPlayersOfTeam = query({
     args: {
-        playerIds: v.array(v.id("player")),
+        teamId: v.id("team"),
     },
     handler: async (ctx, args) => {
-        const players: Doc<"player">[] = [];
-        for (const playerId of args.playerIds) {
-            const player = await ctx.db.get("player", playerId);
-            if (player !== null) {
-                players.push(player);
-            }
-        }
+        const players = ctx.db
+            .query("player")
+            .withIndex("teamId", (q) => q.eq("teamId", args.teamId))
+            .collect();
+
         return players;
     },
 });
@@ -95,23 +93,23 @@ export const addPlayerToTeam = mutation({
     },
 });
 
-export const changeTeamColor = mutation({
-    args: {
-        teamId: v.id("team"),
-    },
-    handler: async (ctx, args) => {
-        const team = await ctx.db.get("team", args.teamId);
-        if (team == null) return ResponseStatus.NOT_FOUND;
+// export const changeTeamColor = mutation({
+//     args: {
+//         teamId: v.id("team"),
+//     },
+//     handler: async (ctx, args) => {
+//         const team = await ctx.db.get("team", args.teamId);
+//         if (team == null) return ResponseStatus.NOT_FOUND;
 
-        const randColor = crypto.getRandomValues(new Uint8Array(3)).buffer;
+//         const randColor = crypto.getRandomValues(new Uint8Array(3)).buffer;
 
-        await ctx.db.patch("team", args.teamId, {
-            color: randColor,
-        });
+//         await ctx.db.patch("team", args.teamId, {
+//             color: randColor,
+//         });
 
-        return ResponseStatus.OK;
-    },
-});
+//         return ResponseStatus.OK;
+//     },
+// });
 
 export const deleteTeam = mutation({
     args: {

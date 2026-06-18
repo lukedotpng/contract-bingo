@@ -68,21 +68,23 @@ export default defineSchema({
         submissionIds: v.optional(v.array(v.id("scoreSubmission"))),
     }).index("byBoardContract", ["boardId", "contractId"]),
     team: defineTable({
-        color: v.bytes(),
+        color: v.string(),
         playerIds: v.optional(v.array(v.id("player"))),
     }),
     scoreSubmission: defineTable({
         matchId: v.id("match"),
         teamId: v.id("team"),
         playerId: v.id("player"),
+        contractId: v.id("contract"),
+        playerUsername: v.string(),
+        seconds: v.number(),
         score: v.number(),
         timestamp: v.number(),
         status: v.union(v.literal("valid"), v.literal("rejected")),
         rejectedReason: v.optional(v.string()),
     })
         .index("matchId", ["matchId"])
-        .index("playerId", ["playerId"])
-        .index("timestamp", ["timestamp"])
+        .index("seconds", ["seconds"])
         .index("status", ["status"]),
     player: defineTable({
         username: v.string(),
@@ -95,5 +97,8 @@ export default defineSchema({
                 v.literal("Nintendo Switch"),
             ),
         ),
-    }).index("username", ["username"]),
+        teamId: v.id("team"),
+    })
+        .index("username", ["username"])
+        .index("teamId", ["teamId"]),
 });

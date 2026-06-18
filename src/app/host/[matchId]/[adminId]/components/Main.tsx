@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@/../convex/_generated/api";
-import { Id } from "@/../convex/_generated/dataModel";
+import { Doc, Id } from "@/../convex/_generated/dataModel";
 import { ResponseStatus } from "@/lib/globals";
 import { useMutation, useQuery } from "convex/react";
 import BingoBoardPreview from "./BingoBoardPreview";
@@ -10,7 +10,11 @@ import TeamsList from "./TeamsList";
 import AddContract from "./AddContract";
 import BulkAddContracts from "./BulkAddContracts";
 import MatchTimeManagement from "./MatchTimeManagement";
-import SubmissionLog from "./SubmissionLog";
+import SubmissionSection from "./SubmissionSection";
+import BingoBoard from "@/app/components/BingoBoard";
+import { useMemo, useState } from "react";
+import Rand from "rand-seed";
+import { IndexToPositionString } from "@/lib/BoardUtils";
 
 export default function Main({
     matchId,
@@ -50,18 +54,69 @@ export default function Main({
             ? { teamIds: match.teamIds }
             : "skip",
     );
-    if (match === ResponseStatus.NOT_FOUND) {
-        throw new Error("Match doesn't exist!");
+    const submissions = useQuery(
+        api.scoreSubmission.getMatchScoreSubmissions,
+        match !== undefined && match !== ResponseStatus.NOT_FOUND
+            ? {
+                  matchId: match._id,
+              }
+            : "skip",
+    );
+
+    const [focusedContractIndex, setFocusedContractIndex] = useState(-1);
+    function UpdateFocusedContractIndex(newIndex: number) {
+        if (newIndex === focusedContractIndex) {
+            newIndex = -1;
+        }
+        setFocusedContractIndex(newIndex);
     }
-    if (board === ResponseStatus.NOT_FOUND) {
-        throw new Error("Board doesn't exist!");
-    }
-    if (match !== undefined && match.adminId !== adminId) {
-        throw new Error("Invalid admin ID");
-    }
-    if (teams !== undefined && teams === ResponseStatus.NOT_FOUND) {
-        throw new Error("Unable to fetch teams");
-    }
+
+    const focusedContract = useMemo(() => {
+        if (
+            focusedContractIndex === -1 ||
+            board === undefined ||
+            board === ResponseStatus.NOT_FOUND ||
+            matchContracts === undefined
+        ) {
+            return undefined;
+        }
+
+        const rand = new Rand(board.seed);
+        const orderedContracts: Doc<"contract">[] = [...matchContracts];
+        for (let i = matchContracts.length - 1; i >= 0; i--) {
+            const j = Math.floor(rand.next() * i);
+            const tempContract = orderedContracts[j];
+            orderedContracts[j] = orderedContracts[i];
+            orderedContracts[i] = tempContract;
+        }
+
+        return orderedContracts[focusedContractIndex];
+    }, [focusedContractIndex, board, matchContracts]);
+
+    // Filter submissions to focused contract, show all if no contract focused
+    const focusedSubmissions = useMemo(() => {
+        if (submissions === undefined || matchContracts === undefined) {
+            return [];
+        }
+
+        if (focusedContract === undefined) {
+            return submissions;
+        }
+
+        const focusedSubmissions = submissions.filter(
+            (submission) => submission.contractId === focusedContract._id,
+        );
+        focusedSubmissions.sort((a, b) => {
+            // Sort by time then score
+            const diff = a.seconds - b.seconds;
+            if (diff === 0) {
+                return b.score - a.score;
+            }
+            return diff;
+        });
+
+        return focusedSubmissions;
+    }, [focusedContract, matchContracts, submissions]);
 
     function AddSingleContract(contract: Contract) {
         if (board !== ResponseStatus.NOT_FOUND && board !== undefined) {
@@ -104,41 +159,72 @@ export default function Main({
         }
     }
 
+    if (match === ResponseStatus.NOT_FOUND) {
+        throw new Error("Match doesn't exist!");
+    }
+    if (board === ResponseStatus.NOT_FOUND) {
+        throw new Error("Board doesn't exist!");
+    }
+    if (match !== undefined && match.adminId !== adminId) {
+        throw new Error("Invalid admin ID");
+    }
+    if (teams !== undefined && teams === ResponseStatus.NOT_FOUND) {
+        throw new Error("Unable to fetch teams");
+    }
+
     if (
         match === undefined ||
         board === undefined ||
         matchContracts === undefined ||
-        teams === undefined
+        teams === undefined ||
+        submissions === undefined
     ) {
         return <p>{"Loading..."}</p>;
     }
 
     return (
         <main>
-            <div className="flex flex-row-reverse flex-wrap justify-end m-2 sm:m-4 gap-2">
+            <div className="flex flex-row-reverse flex-wrap justify-end m-2 sm:m-4 gap-2 sm:gap-4">
                 {/* Settings */}
-                <section className=" flex-1">
+                <section className="flex-1">
                     <MatchTimeManagement match={match} />
-                    <TeamsList matchId={match._id} teams={teams} />
-                    <SubmissionLog match={match} />
+                    <div className="grid xl:grid-cols-[2fr_3fr] gap-2">
+                        <TeamsList matchId={match._id} teams={teams} />
+                        <SubmissionSection
+                            submissions={focusedSubmissions}
+                            teams={teams}
+                            focusedContractLocation={focusedContract?.location}
+                            focusedContractPosition={IndexToPositionString(
+                                focusedContractIndex,
+                                board.boardSize === "4x4" ? 4 : 5,
+                            )}
+                        />
+                    </div>
                 </section>
                 {/* Board */}
                 <section className="grid gap-2 w-180 h-full">
-                    <BingoBoardPreview
+                    <BingoBoard
                         size={board.boardSize === "4x4" ? 4 : 5}
                         seed={board.seed}
                         contracts={matchContracts}
+                        teams={teams}
+                        submissions={submissions}
+                        focusedContractIndex={focusedContractIndex}
+                        UpdateFocusedContractIndex={UpdateFocusedContractIndex}
                     />
-                    <div className="flex font-bold gap-2">
-                        <AddContract AddContract={AddSingleContract} />
-                        <BulkAddContracts AddContracts={AddBulkContracts} />
-                        <button
-                            className="flex-1 ml-[10%] py-2 bg-slate-700 hover:underline"
-                            onClick={RegenerateSeed}
-                        >
-                            {"Shuffle Board"}
-                        </button>
-                    </div>
+                    {(match.status === "scheduled" ||
+                        match.status === "pending") && (
+                        <div className="flex font-bold gap-2">
+                            <AddContract AddContract={AddSingleContract} />
+                            <BulkAddContracts AddContracts={AddBulkContracts} />
+                            <button
+                                className="flex-1 ml-[10%] py-2 bg-slate-700 disabled:text-slate-500"
+                                onClick={RegenerateSeed}
+                            >
+                                {"Shuffle Board"}
+                            </button>
+                        </div>
+                    )}
                     <ContractsList
                         contracts={matchContracts}
                         seed={board.seed}

@@ -12,14 +12,7 @@ export default function TeamInfo({
     teamNumber: number;
     teamLink: string;
 }) {
-    const players = useQuery(
-        api.team.getPlayers,
-        team.playerIds !== undefined
-            ? {
-                  playerIds: team.playerIds,
-              }
-            : "skip",
-    );
+    const players = useQuery(api.team.getPlayersOfTeam, { teamId: team._id });
 
     const playersDialogRef = useRef<HTMLDialogElement>(null);
     function ShowPlayersDialog() {
@@ -38,31 +31,25 @@ export default function TeamInfo({
         return res;
     }
 
-    function GetRgbCssStringFromBytes(bytes: ArrayBuffer) {
-        const rgbArray = new Uint8Array(bytes);
-        const rgbString = `rgb(${rgbArray[0]} ${rgbArray[1]} ${rgbArray[2]})`;
-        return rgbString;
-    }
-
     return (
         <li
             key={team._id}
-            className="relative flex bg-slate-700 border-2 border-slate-600"
+            className="relative grid grid-cols-[auto_1fr] bg-slate-700 border-2 border-slate-600"
         >
             <div
                 className="w-[2ch] border-r-2 border-slate-600"
                 style={{
-                    backgroundColor: `${GetRgbCssStringFromBytes(team.color)}`,
+                    backgroundColor: team.color,
                 }}
             ></div>
-            <div className="w-full">
+            <div className="w-full min-w-0">
                 <div className="flex h-[1.4lh] items-center bg-slate-700 border-b border-slate-600 outline-2 outline-transparent  has-[input:focus]:outline-slate-300">
                     <p className="font-bold w-[3.5ch] text-center border-r-2 border-slate-600 cursor-default">
                         {`#${teamNumber + 1}`}
                     </p>
                     <input
                         type="text"
-                        className="flex-1 h-full pl-1.5 text-ellipsis outline-none"
+                        className="flex-1 min-w-0 h-full pl-1.5 text-ellipsis outline-none"
                         value={teamLink}
                         readOnly
                     />
@@ -101,7 +88,7 @@ export default function TeamInfo({
                     <ul>
                         {players &&
                             players.map((player) => (
-                                <li key={player._id}>players</li>
+                                <li key={player._id}>{player.username}</li>
                             ))}
                     </ul>
                     {(players === undefined || players.length === 0) && (
