@@ -8,7 +8,11 @@ export const createScoreSubmission = mutation({
         matchId: v.id("match"),
         teamId: v.id("team"),
         playerId: v.id("player"),
+        contractId: v.id("contract"),
+        playerUsername: v.string(),
+        seconds: v.number(),
         score: v.number(),
+        timestamp: v.number(),
         rejectedReason: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
@@ -17,10 +21,13 @@ export const createScoreSubmission = mutation({
             matchId: args.matchId,
             teamId: args.teamId,
             playerId: args.playerId,
+            contractId: args.contractId,
+            playerUsername: args.playerUsername,
+            seconds: args.seconds,
             score: args.score,
             status: DEFAULT_STATUS,
             rejectedReason: args.rejectedReason,
-            timestamp: Date.now(),
+            timestamp: args.timestamp,
         });
 
         return await ctx.db.get("scoreSubmission", submissionId);
@@ -49,7 +56,8 @@ export const getMatchScoreSubmissions = query({
     handler: async (ctx, args) => {
         const submissions = ctx.db
             .query("scoreSubmission")
-            .withIndex("matchId", (q) => q.eq("matchId", args.matchId))
+            .withIndex("seconds")
+            .filter((q) => q.eq(q.field("matchId"), args.matchId))
             .collect();
 
         return submissions;

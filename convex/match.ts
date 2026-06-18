@@ -1,7 +1,7 @@
 import { MutationCtx, query } from "./_generated/server";
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { ResponseStatus } from "@/lib/globals";
+import { ResponseStatus, TEAM_COLORS_ARRAY } from "@/lib/globals";
 import { Id } from "./_generated/dataModel";
 import { GenerateSeed } from "@/lib/BoardUtils";
 
@@ -38,9 +38,9 @@ async function createTeamIdsForMatchHelper(
 ) {
     const teamIds: Id<"team">[] = [];
     for (let i = 0; i < teamCount; i++) {
-        const randColor = crypto.getRandomValues(new Uint8Array(3)).buffer;
+        const teamColor = TEAM_COLORS_ARRAY[i];
         const id: Id<"team"> = await ctx.db.insert("team", {
-            color: randColor,
+            color: teamColor,
         });
         teamIds.push(id);
     }

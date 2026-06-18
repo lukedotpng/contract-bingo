@@ -15,8 +15,10 @@
 }
 
 :root {
-    --highlighted-marker-bg: var(--color-slate-500);
+    --highlighted-marker-bg: var(--color-slate-600);
     --highlighted-marker-text: white;
+    --focused-marker-bg: var(--color-slate-200);
+    --focused-marker-text: black;
 }
 
 html:has(dialog:open) {
@@ -33,46 +35,52 @@ html:has(dialog:open) {
     grid-template-rows: auto repeat(5, minmax(0, 1fr));
 }
 
-.row-marker[data-row="1"]:has(~ .bingo-card[data-row="1"]:hover) {
-    color: var(--highlighted-marker-text);
-    background-color: var(--highlighted-marker-bg);
-}
-.row-marker[data-row="2"]:has(~ .bingo-card[data-row="2"]:hover) {
-    color: var(--highlighted-marker-text);
-    background-color: var(--highlighted-marker-bg);
-}
-.row-marker[data-row="3"]:has(~ .bingo-card[data-row="3"]:hover) {
-    color: var(--highlighted-marker-text);
-    background-color: var(--highlighted-marker-bg);
-}
-.row-marker[data-row="4"]:has(~ .bingo-card[data-row="4"]:hover) {
-    color: var(--highlighted-marker-text);
-    background-color: var(--highlighted-marker-bg);
-}
-.row-marker[data-row="5"]:has(~ .bingo-card[data-row="5"]:hover) {
+.row-marker[data-row="1"]:has(~ .bingo-card[data-row="1"]:hover),
+.row-marker[data-row="2"]:has(~ .bingo-card[data-row="2"]:hover),
+.row-marker[data-row="3"]:has(~ .bingo-card[data-row="3"]:hover),
+.row-marker[data-row="4"]:has(~ .bingo-card[data-row="4"]:hover),
+.row-marker[data-row="5"]:has(~ .bingo-card[data-row="5"]:hover),
+.col-marker[data-col="1"]:has(~ .bingo-card[data-col="1"]:hover),
+.col-marker[data-col="2"]:has(~ .bingo-card[data-col="2"]:hover),
+.col-marker[data-col="3"]:has(~ .bingo-card[data-col="3"]:hover),
+.col-marker[data-col="4"]:has(~ .bingo-card[data-col="4"]:hover),
+.col-marker[data-col="5"]:has(~ .bingo-card[data-col="5"]:hover) {
     color: var(--highlighted-marker-text);
     background-color: var(--highlighted-marker-bg);
 }
 
-.col-marker[data-col="1"]:has(~ .bingo-card[data-col="1"]:hover) {
-    color: var(--highlighted-marker-text);
-    background-color: var(--highlighted-marker-bg);
-}
-.col-marker[data-col="2"]:has(~ .bingo-card[data-col="2"]:hover) {
-    color: var(--highlighted-marker-text);
-    background-color: var(--highlighted-marker-bg);
-}
-.col-marker[data-col="3"]:has(~ .bingo-card[data-col="3"]:hover) {
-    color: var(--highlighted-marker-text);
-    background-color: var(--highlighted-marker-bg);
-}
-.col-marker[data-col="4"]:has(~ .bingo-card[data-col="4"]:hover) {
-    color: var(--highlighted-marker-text);
-    background-color: var(--highlighted-marker-bg);
-}
-.col-marker[data-col="5"]:has(~ .bingo-card[data-col="5"]:hover) {
-    color: var(--highlighted-marker-text);
-    background-color: var(--highlighted-marker-bg);
+.row-marker[data-row="1"]:has(
+        ~ .bingo-card[data-row="1"][data-selected="true"]
+    ),
+.row-marker[data-row="2"]:has(
+        ~ .bingo-card[data-row="2"][data-selected="true"]
+    ),
+.row-marker[data-row="3"]:has(
+        ~ .bingo-card[data-row="3"][data-selected="true"]
+    ),
+.row-marker[data-row="4"]:has(
+        ~ .bingo-card[data-row="4"][data-selected="true"]
+    ),
+.row-marker[data-row="5"]:has(
+        ~ .bingo-card[data-row="5"][data-selected="true"]
+    ),
+.col-marker[data-col="1"]:has(
+        ~ .bingo-card[data-col="1"][data-selected="true"]
+    ),
+.col-marker[data-col="2"]:has(
+        ~ .bingo-card[data-col="2"][data-selected="true"]
+    ),
+.col-marker[data-col="3"]:has(
+        ~ .bingo-card[data-col="3"][data-selected="true"]
+    ),
+.col-marker[data-col="4"]:has(
+        ~ .bingo-card[data-col="4"][data-selected="true"]
+    ),
+.col-marker[data-col="5"]:has(
+        ~ .bingo-card[data-col="5"][data-selected="true"]
+    ) {
+    color: var(--focused-marker-text);
+    background-color: var(--focused-marker-bg);
 }
 
 .bingo-card-bg::before {

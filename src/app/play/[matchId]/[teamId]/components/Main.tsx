@@ -3,9 +3,15 @@
 import { api } from "@/../convex/_generated/api";
 import { Id } from "@/../convex/_generated/dataModel";
 import { ResponseStatus } from "@/lib/globals";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import BingoBoard from "./BingoBoard";
 import { useLocalState } from "@/lib/useLocalState";
+import PlayerJoinDialog from "./PlayerJoinDialog";
+import BlankBingoBoard from "./BlankBingoBoard";
+import PlayersList from "./PlayersList";
+import { useState } from "react";
+import ContractInfo from "./ContractInfo";
+import MatchStatusInfo from "./MatchStatusInfo";
 
 export default function Main({
     matchId,
@@ -29,35 +35,65 @@ export default function Main({
             ? { boardId: match.boardId }
             : "skip",
     );
+    const submissions = useQuery(
+        api.scoreSubmission.getMatchScoreSubmissions,
+        match !== undefined && match !== ResponseStatus.NOT_FOUND
+            ? {
+                  matchId: match._id,
+              }
+            : "skip",
+    );
+
+    const allTeams = useQuery(
+        api.team.getTeams,
+        match !== undefined && match !== ResponseStatus.NOT_FOUND
+            ? { teamIds: match.teamIds }
+            : "skip",
+    );
     const team = useQuery(api.team.getTeam, { teamId: teamId });
+    const teamPlayers = useQuery(
+        api.team.getPlayersOfTeam,
+        team !== undefined && team !== ResponseStatus.NOT_FOUND
+            ? { teamId: team._id }
+            : "skip",
+    );
 
-    const [playerName, setPlayerName] = useLocalState<{
-        id: Id<"player">;
-        name: string;
-        platform: Platform;
-    } | null>("player", null);
-
-    /* INFO: Create player & set name and platform
+    const [localPlayerId, setLocalPlayerId] =
+        useLocalState<Id<"player"> | null>("playerId", null);
+    const player = useQuery(
+        api.player.getPlayer,
+        localPlayerId !== null ? { playerId: localPlayerId } : "skip",
+    );
 
     const createPlayer = useMutation(api.player.createPlayer);
-    const player = await createPlayer({
-        username: usernameArg,
-        platform: platformArg,
-    });
 
-    if (player == undefined) return "unable to create player???? wtf";
+    function AddPlayer(username: string, platform: Platform) {
+        if (team === undefined || team === ResponseStatus.NOT_FOUND) {
+            return "Error: No team to join";
+        }
 
-    if (team!.playerIds?.includes(player._id)) return "player already exists within team";
-    const addPlayerToTeam = useMutation(api.team.addPlayerToTeam);
-    await addPlayerToTeam({ teamId, playerId: player._id });
-    */
+        const res = createPlayer({
+            username: username,
+            platform: platform,
+            teamId: team._id,
+        });
+        res.then((data) => {
+            if (data === null) {
+                console.error("Failed to create player");
+                return;
+            }
 
-    /* INFO: local storage
+            setLocalPlayerId(data._id);
+        });
+    }
 
-        um i dunno how to implement this, sorry lukedog
-        im trying to speedrun this so i can watch a turkish soap opera
-        with my mom so i'll get back to this later
-    */
+    const [focusedContractIndex, setFocusedContractIndex] = useState(-1);
+    function UpdateFocusedContractIndex(newIndex: number) {
+        if (newIndex === focusedContractIndex) {
+            newIndex = -1;
+        }
+        setFocusedContractIndex(newIndex);
+    }
 
     /* INFO: Submit scores for contracts
 
@@ -83,6 +119,9 @@ export default function Main({
     if (board === ResponseStatus.NOT_FOUND) {
         throw new Error("Board doesn't exist!");
     }
+    if (allTeams === ResponseStatus.NOT_FOUND) {
+        throw new Error("Cannot find other teams!");
+    }
     if (team === ResponseStatus.NOT_FOUND) {
         throw new Error("Team doesn't exist!");
     }
@@ -98,26 +137,70 @@ export default function Main({
         match === undefined ||
         matchContracts === undefined ||
         team === undefined ||
-        board === undefined
+        board === undefined ||
+        submissions === undefined ||
+        allTeams === undefined ||
+        teamPlayers === undefined
     ) {
         return <p>{"Loading..."}</p>;
     }
 
-    if (match === undefined && team === undefined) {
+    if (
+        localPlayerId === null ||
+        player === ResponseStatus.NOT_FOUND ||
+        !teamPlayers.some((teamPlayer) => teamPlayer._id === localPlayerId)
+    ) {
+        return (
+            <main>
+                <PlayerJoinDialog AddPlayer={AddPlayer} />
+            </main>
+        );
+    }
+
+    if (player === undefined) {
         return <p>{"Loading..."}</p>;
     }
 
     return (
         <main>
-            <div className="flex flex-row-reverse flex-wrap justify-end m-2 sm:m-4 gap-2">
-                <section className="flex-1"></section>
+            <div className="flex flex-row-reverse flex-wrap justify-end m-2 sm:m-4 gap-2 sm:gap-4">
+                <section className="flex-1 grid gap-4 h-fit">
+                    <MatchStatusInfo match={match} />
+                    <PlayersList player={player} teamPlayers={teamPlayers} />
+                    <ContractInfo
+                        match={match}
+                        teamId={team._id}
+                        contracts={matchContracts}
+                        teams={allTeams}
+                        player={player}
+                        seed={board.seed}
+                        boardSize={board.boardSize === "4x4" ? 4 : 5}
+                        index={focusedContractIndex}
+                        submissions={submissions}
+                    />
+                </section>
                 {/* Board */}
                 <section className="grid gap-2 w-180 h-full">
-                    <BingoBoard
-                        size={board.boardSize === "4x4" ? 4 : 5}
-                        seed={board.seed}
-                        contracts={matchContracts}
-                    />
+                    {(match.status === "pending" ||
+                        match.status === "scheduled") && (
+                        <BlankBingoBoard
+                            size={board.boardSize === "4x4" ? 4 : 5}
+                        />
+                    )}
+                    {(match.status === "active" ||
+                        match.status === "finished") && (
+                        <BingoBoard
+                            size={board.boardSize === "4x4" ? 4 : 5}
+                            seed={board.seed}
+                            contracts={matchContracts}
+                            teams={allTeams}
+                            submissions={submissions}
+                            focusedContractIndex={focusedContractIndex}
+                            UpdateFocusedContractIndex={
+                                UpdateFocusedContractIndex
+                            }
+                        />
+                    )}
                 </section>
             </div>
         </main>

@@ -1,5 +1,5 @@
 import { FormatContractLocation } from "@/lib/FormattingUtils";
-import { Doc, Id } from "@/../convex/_generated/dataModel";
+import { Doc, Id } from "db/_generated/dataModel";
 import { useMemo } from "react";
 import Rand from "rand-seed";
 

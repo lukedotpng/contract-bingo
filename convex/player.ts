@@ -1,23 +1,27 @@
-import { query } from "./_generated/server"
-import { mutation } from "./_generated/server"
-import { v } from "convex/values"
+import { query } from "./_generated/server";
+import { mutation } from "./_generated/server";
+import { v } from "convex/values";
 import { ResponseStatus } from "@/lib/globals";
 
 export const createPlayer = mutation({
     args: {
         username: v.string(),
-        platform: v.optional(v.union(
-            v.literal("Epic"),
-            v.literal("Steam"),
-            v.literal("Playstation"),
-            v.literal("Xbox"),
-            v.literal("Nintendo Switch"),
-        )),
+        platform: v.optional(
+            v.union(
+                v.literal("Epic"),
+                v.literal("Steam"),
+                v.literal("Playstation"),
+                v.literal("Xbox"),
+                v.literal("Nintendo Switch"),
+            ),
+        ),
+        teamId: v.id("team"),
     },
     handler: async (ctx, args) => {
         const playerId = await ctx.db.insert("player", {
             username: args.username,
             platform: args.platform,
+            teamId: args.teamId,
         });
 
         return await ctx.db.get("player", playerId);
@@ -40,13 +44,15 @@ export const updatePlayer = mutation({
     args: {
         playerId: v.id("player"),
         username: v.string(),
-        platform: v.optional(v.union(
-            v.literal("Epic"),
-            v.literal("Steam"),
-            v.literal("Playstation"),
-            v.literal("Xbox"),
-            v.literal("Nintendo Switch"),
-        )),
+        platform: v.optional(
+            v.union(
+                v.literal("Epic"),
+                v.literal("Steam"),
+                v.literal("Playstation"),
+                v.literal("Xbox"),
+                v.literal("Nintendo Switch"),
+            ),
+        ),
     },
     handler: async (ctx, args) => {
         const player = await ctx.db.get("player", args.playerId);

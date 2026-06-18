@@ -9,9 +9,9 @@ export default function TeamsList({
     teams: Doc<"team">[];
 }) {
     return (
-        <div className="w-full">
+        <div>
             <p className="font-bold">{"Teams"}</p>
-            <ol className="w-full grid gap-1 max-w-96">
+            <ol className="">
                 {teams.map((team, index) => {
                     const teamLink =
                         window.location.origin +
