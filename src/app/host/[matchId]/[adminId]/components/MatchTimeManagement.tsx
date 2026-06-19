@@ -38,7 +38,6 @@ export default function MatchTimeManagement({
     }
 
     function EndMatch() {
-        startTimeMutation({ matchId: match._id, startTime: -1 });
         matchStatusMutation({ matchId: match._id, status: "finished" });
     }
 
@@ -66,7 +65,7 @@ export default function MatchTimeManagement({
         }, 100);
 
         return () => clearInterval(countdownRef.current);
-    }, [match.startTime, match._id, matchStatusMutation]);
+    }, [match.startTime, match._id, matchStatusMutation, match.status]);
 
     return (
         <div className="w-full">

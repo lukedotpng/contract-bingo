@@ -98,8 +98,12 @@ export const updateMatchResponseStatus = mutation({
         const match = await ctx.db.get("match", args.matchId);
         if (match == null) return ResponseStatus.NOT_FOUND;
 
+        if (args.status === "finished") {
+            ctx.db.patch("match", args.matchId, { startTime: -1 });
+        }
+
         match.status = args.status;
-        await ctx.db.patch("match", args.matchId, match);
+        await ctx.db.patch("match", args.matchId, { status: args.status });
 
         return ResponseStatus.OK;
     },
