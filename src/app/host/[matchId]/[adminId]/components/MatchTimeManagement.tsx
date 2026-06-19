@@ -51,10 +51,10 @@ export default function MatchTimeManagement({
         }
 
         countdownRef.current = setInterval(() => {
-            if (match.startTime !== undefined) {
+            if (match.startTime !== undefined && match.startTime !== -1) {
                 const updatedTimeFromStart = match.startTime - Date.now();
 
-                if (updatedTimeFromStart < 0) {
+                if (updatedTimeFromStart < 0 && match.status !== "active") {
                     matchStatusMutation({
                         status: "active",
                         matchId: match._id,
