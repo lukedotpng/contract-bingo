@@ -185,10 +185,7 @@ export default function MatchTimeManagement({
                                     <option value="-1" className="bg-slate-500">
                                         Standby
                                     </option>
-                                    <option
-                                        value="0.1"
-                                        className="bg-slate-500"
-                                    >
+                                    <option value="5" className="bg-slate-500">
                                         5 minutes
                                     </option>
                                     <option value="10" className="bg-slate-500">
