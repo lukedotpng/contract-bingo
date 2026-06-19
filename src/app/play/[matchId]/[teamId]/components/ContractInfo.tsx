@@ -210,7 +210,7 @@ export default function ContractInfo({
                                 className="flex-1 min-w-0 h-full pl-1.5 text-ellipsis outline-none"
                             />
                             <CopyIdButton
-                                contractId={contract.epicId}
+                                contractId={platformContractId}
                                 HandleCopy={CopyId}
                             />
                         </div>
