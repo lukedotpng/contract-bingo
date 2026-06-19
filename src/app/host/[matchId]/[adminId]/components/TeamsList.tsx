@@ -11,7 +11,7 @@ export default function TeamsList({
     return (
         <div>
             <p className="font-bold">{"Teams"}</p>
-            <ol className="">
+            <ol className="grid gap-2">
                 {teams.map((team, index) => {
                     const teamLink =
                         window.location.origin +
