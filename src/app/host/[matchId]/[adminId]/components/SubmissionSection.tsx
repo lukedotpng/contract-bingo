@@ -1,6 +1,8 @@
 import SubmissionsList from "@/app/components/SubmissionsList";
 import { FormatContractLocation } from "@/lib/FormattingUtils";
-import { Doc } from "db/_generated/dataModel";
+import { useMutation } from "convex/react";
+import { api } from "db/_generated/api";
+import { Doc, Id } from "db/_generated/dataModel";
 
 export default function SubmissionSection({
     teams,
@@ -13,6 +15,20 @@ export default function SubmissionSection({
     focusedContractLocation: ContractLocation | undefined;
     focusedContractPosition: string | undefined;
 }) {
+    const submissionStatusMutation = useMutation(
+        api.scoreSubmission.updateScoreSubmissionResponseStatus,
+    );
+
+    function ToggleStatus(
+        submissionId: Id<"scoreSubmission">,
+        currentStatus: "valid" | "rejected",
+    ) {
+        submissionStatusMutation({
+            status: currentStatus === "valid" ? "rejected" : "valid",
+            submissionId: submissionId,
+        });
+    }
+
     return (
         <div>
             <p className="font-bold">
@@ -25,7 +41,12 @@ export default function SubmissionSection({
                     <span>{"All Contracts"}</span>
                 )}
             </p>
-            <SubmissionsList submissions={submissions} teams={teams} />
+            <SubmissionsList
+                submissions={submissions}
+                teams={teams}
+                isAdmin
+                ToggleStatus={ToggleStatus}
+            />
         </div>
     );
 }

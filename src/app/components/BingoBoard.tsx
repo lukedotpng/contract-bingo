@@ -35,7 +35,10 @@ export default function BingoBoard({
     function GetTopSubmission(contractId: Id<"contract">) {
         let topSubmissionIndex = -1;
         for (let i = 0; i < submissions.length; i++) {
-            if (submissions[i].contractId !== contractId) {
+            if (
+                submissions[i].contractId !== contractId ||
+                submissions[i].status === "rejected"
+            ) {
                 continue;
             }
 

@@ -34,6 +34,9 @@ export default function ContractInfo({
     const submissionMutation = useMutation(
         api.scoreSubmission.createScoreSubmission,
     );
+    const submissionStatusMutation = useMutation(
+        api.scoreSubmission.updateScoreSubmissionResponseStatus,
+    );
 
     const contract = useMemo(() => {
         if (index === -1) {
@@ -141,6 +144,50 @@ export default function ContractInfo({
         setScore("");
     }
 
+    const topContract = useMemo(() => {
+        let topSubmissionIndex = -1;
+        for (let i = 0; i < contractSubmissions.length; i++) {
+            if (contractSubmissions[i].status === "rejected") {
+                continue;
+            }
+
+            if (topSubmissionIndex === -1) {
+                topSubmissionIndex = i;
+                continue;
+            }
+
+            if (
+                contractSubmissions[i].seconds <
+                contractSubmissions[topSubmissionIndex].seconds
+            ) {
+                topSubmissionIndex = i;
+            } else if (
+                contractSubmissions[i].seconds ===
+                    contractSubmissions[topSubmissionIndex].seconds &&
+                contractSubmissions[i].score >
+                    contractSubmissions[topSubmissionIndex].score
+            ) {
+                topSubmissionIndex = i;
+            }
+        }
+
+        if (topSubmissionIndex === -1) {
+            return undefined;
+        }
+
+        return contractSubmissions[topSubmissionIndex];
+    }, [contractSubmissions]);
+
+    function ToggleStatus(
+        submissionId: Id<"scoreSubmission">,
+        currentStatus: "valid" | "rejected",
+    ) {
+        submissionStatusMutation({
+            status: currentStatus === "valid" ? "rejected" : "valid",
+            submissionId: submissionId,
+        });
+    }
+
     if (contract === undefined) {
         return;
     }
@@ -153,10 +200,10 @@ export default function ContractInfo({
             </div>
             <div className="grid xl:grid-cols-2 gap-2 sm:gap-4">
                 <div className="min-w-0">
-                    {contractSubmissions.length === 0 && (
+                    {topContract === undefined && (
                         <h4>{"No times submitted"}</h4>
                     )}
-                    {contractSubmissions.length > 0 && (
+                    {topContract !== undefined && (
                         <div>
                             <h4 className="font-bold text-lg">{"Top Time"}</h4>
                             <div className="grid grid-cols-[auto_1fr] bg-slate-800 border-2 border-slate-600">
@@ -165,8 +212,7 @@ export default function ContractInfo({
                                     style={{
                                         backgroundColor: teams.find(
                                             (team) =>
-                                                team._id ===
-                                                contractSubmissions[0].teamId,
+                                                team._id === topContract.teamId,
                                         )?.color,
                                     }}
                                 ></div>
@@ -174,20 +220,17 @@ export default function ContractInfo({
                                     <p>
                                         <span className="font-bold">
                                             {SecondsToTimeString(
-                                                contractSubmissions[0].seconds,
+                                                topContract.seconds,
                                             )}
                                         </span>
                                         <span className="mx-2">{"by"}</span>
                                         <span className="font-bold">
-                                            {
-                                                contractSubmissions[0]
-                                                    .playerUsername
-                                            }
+                                            {topContract.playerUsername}
                                         </span>
                                     </p>
                                     <p>
                                         <span>{"Score: "}</span>
-                                        {contractSubmissions[0].score}
+                                        {topContract.score}
                                     </p>
                                 </div>
                             </div>
@@ -351,6 +394,9 @@ export default function ContractInfo({
                     <SubmissionsList
                         submissions={contractSubmissions}
                         teams={teams}
+                        isAdmin={false}
+                        teamId={teamId}
+                        ToggleStatus={ToggleStatus}
                     />
                 </div>
             </div>
