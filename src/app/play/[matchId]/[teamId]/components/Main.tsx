@@ -4,7 +4,7 @@ import { api } from "@/../convex/_generated/api";
 import { Id } from "@/../convex/_generated/dataModel";
 import { ResponseStatus } from "@/lib/globals";
 import { useMutation, useQuery } from "convex/react";
-import BingoBoard from "./BingoBoard";
+import BingoBoard from "@/app/components/BingoBoard";
 import { useLocalState } from "@/lib/useLocalState";
 import PlayerJoinDialog from "./PlayerJoinDialog";
 import BlankBingoBoard from "./BlankBingoBoard";
