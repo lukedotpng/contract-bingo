@@ -18,7 +18,7 @@ export default function SubmissionsList({
     ) => void;
 }) {
     return (
-        <ol className="grid gap-1 bg-slate-600 p-1 border-2 border-slate-500 max-h-96 overflow-scroll">
+        <ol className="grid gap-1 bg-slate-600 p-1 border-2 border-slate-500 max-h-96 overflow-y-scroll">
             {submissions.map((submission) => {
                 return (
                     <li

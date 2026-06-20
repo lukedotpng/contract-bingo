@@ -8,7 +8,7 @@ export default function ContractsList({
     RemoveContract: (contractId: string) => void;
 }) {
     return (
-        <div className="grid gap-2 align-baseline overflow-scroll">
+        <div className="grid gap-2 align-baseline overflow-y-scroll">
             {contracts.map((contract) => (
                 <details
                     key={contract.id}

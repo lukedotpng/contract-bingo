@@ -74,7 +74,7 @@ export default function BulkContractDialog({
                         {"Close"}
                     </button>
                 </div>
-                <div className="flex border-2 bg-slate-700 border-slate-600 has-[textarea:focus]:outline-1 outline-offset-1 outline-slate-50 h-full overflow-scroll">
+                <div className="flex border-2 bg-slate-700 border-slate-600 has-[textarea:focus]:outline-1 outline-offset-1 outline-slate-50 h-full overflow-y-scroll">
                     <span
                         ref={lineNumbersRef}
                         className="whitespace-pre w-[3ch] text-white py-0.5 h-full text-center"
