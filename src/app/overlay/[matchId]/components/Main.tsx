@@ -1,10 +1,14 @@
 "use client";
 
 import { api } from "@/../convex/_generated/api";
-import { Id } from "@/../convex/_generated/dataModel";
+import { Doc, Id } from "@/../convex/_generated/dataModel";
 import { ResponseStatus } from "@/lib/globals";
 import { useQuery } from "convex/react";
 import OverlayBingoBoard from "./OverlayBingoBoard";
+import Rand from "rand-seed";
+import { useState, useMemo } from "react";
+import SubmissionsList from "./SubmissionList";
+import { IndexToPositionString } from "@/lib/BoardUtils";
 
 export default function Main({ matchId }: { matchId: Id<"match"> }) {
     const match = useQuery(api.match.getMatch, { matchId });
@@ -35,6 +39,61 @@ export default function Main({ matchId }: { matchId: Id<"match"> }) {
             : "skip",
     );
 
+    const [focusedContractIndex, setFocusedContractIndex] = useState(-1);
+    function UpdateFocusedContractIndex(newIndex: number) {
+        if (newIndex === focusedContractIndex) {
+            newIndex = -1;
+        }
+        setFocusedContractIndex(newIndex);
+    }
+
+    const focusedContract = useMemo(() => {
+        if (
+            focusedContractIndex === -1 ||
+            board === undefined ||
+            board === ResponseStatus.NOT_FOUND ||
+            matchContracts === undefined
+        ) {
+            return undefined;
+        }
+
+        const rand = new Rand(board.seed);
+        const orderedContracts: Doc<"contract">[] = [...matchContracts];
+        for (let i = matchContracts.length - 1; i >= 0; i--) {
+            const j = Math.floor(rand.next() * i);
+            const tempContract = orderedContracts[j];
+            orderedContracts[j] = orderedContracts[i];
+            orderedContracts[i] = tempContract;
+        }
+
+        return orderedContracts[focusedContractIndex];
+    }, [focusedContractIndex, board, matchContracts]);
+
+    // Filter submissions to focused contract, show all if no contract focused
+    const focusedSubmissions = useMemo(() => {
+        if (submissions === undefined || matchContracts === undefined) {
+            return [];
+        }
+
+        if (focusedContract === undefined) {
+            return submissions;
+        }
+
+        const focusedSubmissions = submissions.filter(
+            (submission) => submission.contractId === focusedContract._id,
+        );
+        focusedSubmissions.sort((a, b) => {
+            // Sort by time then score
+            const diff = a.seconds - b.seconds;
+            if (diff === 0) {
+                return b.score - a.score;
+            }
+            return diff;
+        });
+
+        return focusedSubmissions;
+    }, [focusedContract, matchContracts, submissions]);
+
     if (match === ResponseStatus.NOT_FOUND) {
         throw new Error("Match doesn't exist!");
     }
@@ -63,6 +122,17 @@ export default function Main({ matchId }: { matchId: Id<"match"> }) {
                 contracts={matchContracts}
                 teams={teams}
                 submissions={submissions}
+                focusedContractIndex={focusedContractIndex}
+                UpdateFocusedContractIndex={UpdateFocusedContractIndex}
+            />
+            <SubmissionsList
+                submissions={focusedSubmissions}
+                teams={teams}
+                focusedContractLocation={focusedContract?.location}
+                focusedContractPosition={IndexToPositionString(
+                    focusedContractIndex,
+                    board.boardSize === "4x4" ? 4 : 5,
+                )}
             />
         </div>
     );

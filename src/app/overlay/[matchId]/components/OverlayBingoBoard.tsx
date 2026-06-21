@@ -3,18 +3,22 @@ import { Doc, Id } from "db/_generated/dataModel";
 import { useMemo } from "react";
 import Rand from "rand-seed";
 
-export default function OverlayBingoBoard({
+export default function BingoBoard({
     size,
     seed,
     contracts,
     teams,
     submissions,
+    focusedContractIndex,
+    UpdateFocusedContractIndex,
 }: {
     size: number;
     seed: string;
     contracts: Doc<"contract">[];
     teams: Doc<"team">[];
     submissions: Doc<"scoreSubmission">[];
+    focusedContractIndex: number;
+    UpdateFocusedContractIndex: (newIndex: number) => void;
 }) {
     const seededOrderContracts = useMemo(() => {
         const rand = new Rand(seed);
@@ -77,9 +81,11 @@ export default function OverlayBingoBoard({
             bingoSquares.push(
                 <div
                     key={i}
-                    className="grid aspect-square border-2 border-slate-600"
+                    className="text-xl bingo-card grid aspect-square border-2 border-slate-600 cursor-default data-[selected=true]:scale-105 data-[selected=true]:border-slate-200 data-[selected=true]:z-20 data-[selected=true]:shadow-[0_0_5px_3px] shadow-slate-200 origin-center"
                     data-row={Math.floor(i / size) + 1}
                     data-col={(i % size) + 1}
+                    data-selected={i === focusedContractIndex}
+                    onClick={() => UpdateFocusedContractIndex(i)}
                 >
                     <div
                         className={`relative grid bg-slate-700 bg-center text-white text-center text-balance overflow-clip bingo-card-bg bingo-card-bg-${contract.location}`}
@@ -109,7 +115,7 @@ export default function OverlayBingoBoard({
 
     return (
         <div
-            className={`grid ${size === 4 ? "board-size-4" : "board-size-5"} text-lg font-bold`}
+            className={`grid ${size === 4 ? "board-size-4" : "board-size-5"} font-bold`}
         >
             {/* CORNER */}
             <div className="row-start-1 col-start-1"></div>
