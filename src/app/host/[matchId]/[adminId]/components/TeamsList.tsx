@@ -1,5 +1,6 @@
 import { Doc, Id } from "@/../convex/_generated/dataModel";
 import TeamInfo from "./TeamInfo";
+import OverlayLink from "./OverlayLink";
 
 export default function TeamsList({
     matchId,
@@ -28,6 +29,7 @@ export default function TeamsList({
                         />
                     );
                 })}
+                <OverlayLink matchId={matchId} />
             </ol>
         </div>
     );
