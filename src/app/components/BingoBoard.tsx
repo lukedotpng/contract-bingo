@@ -47,15 +47,7 @@ export default function BingoBoard({
                 continue;
             }
 
-            if (
-                submissions[i].seconds < submissions[topSubmissionIndex].seconds
-            ) {
-                topSubmissionIndex = i;
-            } else if (
-                submissions[i].seconds ===
-                    submissions[topSubmissionIndex].seconds &&
-                submissions[i].score > submissions[topSubmissionIndex].score
-            ) {
+            if (submissions[i].score > submissions[topSubmissionIndex].score) {
                 topSubmissionIndex = i;
             }
         }

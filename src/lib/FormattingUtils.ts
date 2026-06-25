@@ -38,11 +38,37 @@ export function FormatContractLocation(location: ContractLocation) {
 export function SecondsToTimeString(totalSeconds: number) {
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
+    const secondsFixed = seconds.toFixed(3);
+
+    const minutesString =
+        minutes < 10 ? (minutes === 0 ? "00" : "0" + minutes) : minutes + "";
+    const secondsString =
+        seconds < 10
+            ? seconds === 0
+                ? "00.000"
+                : "0" + secondsFixed
+            : secondsFixed;
+
+    return minutesString + ":" + secondsString;
+}
+
+export function MillisecondsToTimeString(totalMilliseconds: number) {
+    const milliseconds = totalMilliseconds % 1000;
+    const seconds = Math.floor(totalMilliseconds / 1000) % 60;
+    const minutes = Math.floor(seconds / 60);
 
     const minutesString =
         minutes < 10 ? (minutes === 0 ? "00" : "0" + minutes) : minutes + "";
     const secondsString =
         seconds < 10 ? (seconds === 0 ? "00" : "0" + seconds) : seconds + "";
+    const millisecondsString =
+        milliseconds < 100
+            ? milliseconds < 10
+                ? milliseconds === 0
+                    ? "000"
+                    : "00" + milliseconds
+                : "0" + milliseconds
+            : "" + milliseconds;
 
-    return minutesString + ":" + secondsString;
+    return minutesString + ":" + secondsString + "." + millisecondsString;
 }

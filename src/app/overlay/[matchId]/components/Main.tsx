@@ -82,14 +82,7 @@ export default function Main({ matchId }: { matchId: Id<"match"> }) {
         const focusedSubmissions = submissions.filter(
             (submission) => submission.contractId === focusedContract._id,
         );
-        focusedSubmissions.sort((a, b) => {
-            // Sort by time then score
-            const diff = a.seconds - b.seconds;
-            if (diff === 0) {
-                return b.score - a.score;
-            }
-            return diff;
-        });
+        focusedSubmissions.sort((a, b) => b.score - a.score);
 
         return focusedSubmissions;
     }, [focusedContract, matchContracts, submissions]);

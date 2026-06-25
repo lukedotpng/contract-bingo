@@ -1,9 +1,7 @@
 import SubmissionsList from "@/app/components/SubmissionsList";
 import { IndexToPositionString } from "@/lib/BoardUtils";
-import {
-    FormatContractLocation,
-    SecondsToTimeString,
-} from "@/lib/FormattingUtils";
+import { FormatContractLocation } from "@/lib/FormattingUtils";
+import { ScoreToSeconds, ScoreToTimeString } from "@/lib/SubmissionsUtils";
 import { useMutation } from "convex/react";
 import { api } from "db/_generated/api";
 import { Doc, Id } from "db/_generated/dataModel";
@@ -64,12 +62,7 @@ export default function ContractInfo({
             (submission) => submission.contractId === contract._id,
         );
         contractSubmissions.sort((a, b) => {
-            // Sort by time then score
-            const diff = a.seconds - b.seconds;
-            if (diff === 0) {
-                return b.score - a.score;
-            }
-            return diff;
+            return b.score - a.score;
         });
 
         return contractSubmissions;
@@ -101,24 +94,21 @@ export default function ContractInfo({
         return res;
     }
 
-    const [minutes, setMinutes] = useState<number | string>("");
-    const [seconds, setSeconds] = useState<number | string>("");
     const [score, setScore] = useState<number | string>("");
+    const timePreview = useMemo(() => {
+        if (typeof score === "string") {
+            return "No Score";
+        }
 
-    function SubmitTime() {
+        return ScoreToTimeString(score);
+    }, [score]);
+
+    function SubmitScore() {
         if (contract === undefined) {
             return;
         }
 
-        let totalSeconds = 0;
-        if (typeof seconds === "number") {
-            totalSeconds += seconds;
-        }
-        if (typeof minutes === "number") {
-            totalSeconds += minutes * 60;
-        }
-
-        if (totalSeconds === 0 || typeof score === "string") {
+        if (typeof score === "string" || ScoreToSeconds(score) === undefined) {
             return;
         }
 
@@ -128,13 +118,10 @@ export default function ContractInfo({
             playerId: player._id,
             contractId: contract._id,
             playerUsername: player.username,
-            seconds: totalSeconds,
             score: score,
             timestamp: Date.now(),
         });
 
-        setMinutes("");
-        setSeconds("");
         setScore("");
     }
 
@@ -151,15 +138,8 @@ export default function ContractInfo({
             }
 
             if (
-                contractSubmissions[i].seconds <
-                contractSubmissions[topSubmissionIndex].seconds
-            ) {
-                topSubmissionIndex = i;
-            } else if (
-                contractSubmissions[i].seconds ===
-                    contractSubmissions[topSubmissionIndex].seconds &&
                 contractSubmissions[i].score >
-                    contractSubmissions[topSubmissionIndex].score
+                contractSubmissions[topSubmissionIndex].score
             ) {
                 topSubmissionIndex = i;
             }
@@ -213,8 +193,8 @@ export default function ContractInfo({
                                 <div className="p-2">
                                     <p>
                                         <span className="font-bold">
-                                            {SecondsToTimeString(
-                                                topContract.seconds,
+                                            {ScoreToTimeString(
+                                                topContract.score,
                                             )}
                                         </span>
                                         <span className="mx-2">{"by"}</span>
@@ -254,129 +234,46 @@ export default function ContractInfo({
                         {match.status !== "finished" && (
                             <div>
                                 <h4 className="text-lg text-center font-bold mt-4 mb-1 mx-8 border-b-2 border-slate-600">
-                                    {"Submit Time"}
+                                    {"Submit Score"}
                                 </h4>
                                 <form
-                                    className="grid place-content-center gap-2 "
+                                    className="grid grid-cols-2 gap-2 min-w-0"
                                     onSubmit={(e) => {
                                         e.preventDefault();
-                                        SubmitTime();
+                                        SubmitScore();
                                     }}
                                 >
-                                    <div className="flex justify-center gap-2">
-                                        <div className="w-28">
-                                            <p className="font-bold text-center">
-                                                {"Time"}
-                                            </p>
-                                            <div className="inline-block">
-                                                <input
-                                                    type="text"
-                                                    inputMode="numeric"
-                                                    name="minutes"
-                                                    id="minutes"
-                                                    placeholder="mm"
-                                                    value={minutes}
-                                                    onInput={(e) => {
-                                                        if (
-                                                            e.currentTarget
-                                                                .value === ""
-                                                        ) {
-                                                            setMinutes("");
-                                                            return;
-                                                        }
-                                                        const inputAsInt =
-                                                            parseInt(
-                                                                e.currentTarget
-                                                                    .value,
-                                                            );
-                                                        if (
-                                                            isNaN(inputAsInt) ||
-                                                            inputAsInt > 59
-                                                        ) {
-                                                            return;
-                                                        }
+                                    <input
+                                        type="text"
+                                        inputMode="numeric"
+                                        name="score"
+                                        id="score"
+                                        placeholder="score..."
+                                        value={score}
+                                        onInput={(e) => {
+                                            if (e.currentTarget.value === "") {
+                                                setScore("");
+                                                return;
+                                            }
+                                            const inputAsInt = parseInt(
+                                                e.currentTarget.value,
+                                            );
+                                            if (
+                                                isNaN(inputAsInt) ||
+                                                e.currentTarget.value.length > 6
+                                            ) {
+                                                return;
+                                            }
 
-                                                        setMinutes(inputAsInt);
-                                                    }}
-                                                    className="w-12 bg-slate-50 text-black text-center border-2 border-slate-600 focus:outline-1 outline-slate-50 focus:outline-double"
-                                                />
-                                                <span className="inline-block font-bold w-4 text-center">
-                                                    {":"}
-                                                </span>
-                                                <input
-                                                    type="text"
-                                                    inputMode="numeric"
-                                                    name="seconds"
-                                                    id="seconds"
-                                                    placeholder="ss"
-                                                    value={seconds}
-                                                    onInput={(e) => {
-                                                        if (
-                                                            e.currentTarget
-                                                                .value === ""
-                                                        ) {
-                                                            setSeconds("");
-                                                            return;
-                                                        }
-                                                        const inputAsInt =
-                                                            parseInt(
-                                                                e.currentTarget
-                                                                    .value,
-                                                            );
-                                                        if (
-                                                            isNaN(inputAsInt) ||
-                                                            inputAsInt > 59
-                                                        ) {
-                                                            return;
-                                                        }
-
-                                                        setSeconds(inputAsInt);
-                                                    }}
-                                                    className="w-12 bg-slate-50 text-black text-center border-2 border-slate-600 focus:outline-1 outline-slate-50 focus:outline-double"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="w-28">
-                                            <p className="font-bold text-center">
-                                                {"Score"}
-                                            </p>
-                                            <input
-                                                type="text"
-                                                inputMode="numeric"
-                                                name="score"
-                                                id="score"
-                                                placeholder="score..."
-                                                value={score}
-                                                onInput={(e) => {
-                                                    if (
-                                                        e.currentTarget
-                                                            .value === ""
-                                                    ) {
-                                                        setScore("");
-                                                        return;
-                                                    }
-                                                    const inputAsInt = parseInt(
-                                                        e.currentTarget.value,
-                                                    );
-                                                    if (
-                                                        isNaN(inputAsInt) ||
-                                                        e.currentTarget.value
-                                                            .length > 6
-                                                    ) {
-                                                        return;
-                                                    }
-
-                                                    setScore(inputAsInt);
-                                                }}
-                                                className="w-28 px-0.5 bg-slate-50 text-black border-2 border-slate-600 focus:outline-1 outline-slate-50 focus:outline-double"
-                                            />
-                                        </div>
-                                    </div>
+                                            setScore(inputAsInt);
+                                        }}
+                                        className="max-w-30 min-w-0 place-self-end px-0.5 bg-slate-50 text-black border-2 border-slate-600 focus:outline-1 outline-slate-50 focus:outline-double"
+                                    />
                                     <button
                                         type="submit"
-                                        className="mt-2 py-2 px-8 bg-slate-600 hover:underline col-span-2"
+                                        className="max-w-30 bg-slate-600 hover:underline"
                                     >
-                                        {"Submit Score"}
+                                        {"Submit"}
                                     </button>
                                 </form>
                             </div>

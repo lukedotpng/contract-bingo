@@ -2,6 +2,7 @@ import {
     FormatContractLocation,
     SecondsToTimeString,
 } from "@/lib/FormattingUtils";
+import { ScoreToTimeString } from "@/lib/SubmissionsUtils";
 import { Doc } from "db/_generated/dataModel";
 
 export default function SubmissionsList({
@@ -42,8 +43,8 @@ export default function SubmissionsList({
                                     <div className="group-data-[rejected=true]:line-through decoration-2 grid grid-cols-2">
                                         <p>
                                             <span className="font-bold tabular-nums">
-                                                {SecondsToTimeString(
-                                                    submission.seconds,
+                                                {ScoreToTimeString(
+                                                    submission.score,
                                                 )}
                                             </span>
                                             <span>{" by "}</span>
