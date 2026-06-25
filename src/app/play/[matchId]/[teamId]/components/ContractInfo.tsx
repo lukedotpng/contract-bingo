@@ -8,7 +8,7 @@ import { useMutation } from "convex/react";
 import { api } from "db/_generated/api";
 import { Doc, Id } from "db/_generated/dataModel";
 import Rand from "rand-seed";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 export default function ContractInfo({
     match,
@@ -104,12 +104,6 @@ export default function ContractInfo({
     const [minutes, setMinutes] = useState<number | string>("");
     const [seconds, setSeconds] = useState<number | string>("");
     const [score, setScore] = useState<number | string>("");
-    // clear values on contract update
-    useEffect(() => {
-        setMinutes("");
-        setSeconds("");
-        setScore("");
-    }, [index]);
 
     function SubmitTime() {
         if (contract === undefined) {

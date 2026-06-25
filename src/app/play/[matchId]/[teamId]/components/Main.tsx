@@ -168,6 +168,7 @@ export default function Main({
                     <MatchStatusInfo match={match} />
                     <PlayersList player={player} teamPlayers={teamPlayers} />
                     <ContractInfo
+                        key={focusedContractIndex}
                         match={match}
                         teamId={team._id}
                         contracts={matchContracts}
