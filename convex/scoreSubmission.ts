@@ -54,8 +54,9 @@ export const getMatchScoreSubmissions = query({
     handler: async (ctx, args) => {
         const submissions = ctx.db
             .query("scoreSubmission")
-            .withIndex("seconds")
+            .withIndex("timestamp")
             .filter((q) => q.eq(q.field("matchId"), args.matchId))
+            .order("desc")
             .collect();
 
         return submissions;

@@ -84,7 +84,8 @@ export default defineSchema({
         rejectedReason: v.optional(v.string()),
     })
         .index("matchId", ["matchId"])
-        .index("seconds", ["seconds"])
+        .index("timestamp", ["timestamp"])
+        .index("score", ["score"])
         .index("status", ["status"]),
     player: defineTable({
         username: v.string(),
