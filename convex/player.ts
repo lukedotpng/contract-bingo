@@ -30,10 +30,15 @@ export const createPlayer = mutation({
 
 export const getPlayer = query({
     args: {
-        playerId: v.id("player"),
+        playerId: v.string(),
     },
     handler: async (ctx, args) => {
-        const player = await ctx.db.get("player", args.playerId);
+        const normalizedPlayerId = ctx.db.normalizeId("player", args.playerId);
+        if (normalizedPlayerId === null) {
+            return ResponseStatus.NOT_FOUND;
+        }
+
+        const player = await ctx.db.get("player", normalizedPlayerId);
         if (player == null) return ResponseStatus.NOT_FOUND;
 
         return player;
