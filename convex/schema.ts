@@ -77,14 +77,15 @@ export default defineSchema({
         playerId: v.id("player"),
         contractId: v.id("contract"),
         playerUsername: v.string(),
-        seconds: v.number(),
+        seconds: v.optional(v.number()),
         score: v.number(),
         timestamp: v.number(),
         status: v.union(v.literal("valid"), v.literal("rejected")),
         rejectedReason: v.optional(v.string()),
     })
         .index("matchId", ["matchId"])
-        .index("seconds", ["seconds"])
+        .index("timestamp", ["timestamp"])
+        .index("score", ["score"])
         .index("status", ["status"]),
     player: defineTable({
         username: v.string(),

@@ -10,7 +10,6 @@ export const createScoreSubmission = mutation({
         playerId: v.id("player"),
         contractId: v.id("contract"),
         playerUsername: v.string(),
-        seconds: v.number(),
         score: v.number(),
         timestamp: v.number(),
         rejectedReason: v.optional(v.string()),
@@ -23,7 +22,6 @@ export const createScoreSubmission = mutation({
             playerId: args.playerId,
             contractId: args.contractId,
             playerUsername: args.playerUsername,
-            seconds: args.seconds,
             score: args.score,
             status: DEFAULT_STATUS,
             rejectedReason: args.rejectedReason,
@@ -56,8 +54,9 @@ export const getMatchScoreSubmissions = query({
     handler: async (ctx, args) => {
         const submissions = ctx.db
             .query("scoreSubmission")
-            .withIndex("seconds")
+            .withIndex("timestamp")
             .filter((q) => q.eq(q.field("matchId"), args.matchId))
+            .order("desc")
             .collect();
 
         return submissions;
