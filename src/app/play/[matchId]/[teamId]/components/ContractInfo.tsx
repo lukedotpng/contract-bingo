@@ -237,44 +237,60 @@ export default function ContractInfo({
                                     {"Submit Score"}
                                 </h4>
                                 <form
-                                    className="grid grid-cols-2 gap-2 min-w-0"
+                                    className="relative grid place-items-center gap-2"
                                     onSubmit={(e) => {
                                         e.preventDefault();
                                         SubmitScore();
                                     }}
                                 >
-                                    <input
-                                        type="text"
-                                        inputMode="numeric"
-                                        name="score"
-                                        id="score"
-                                        placeholder="score..."
-                                        value={score}
-                                        onInput={(e) => {
-                                            if (e.currentTarget.value === "") {
-                                                setScore("");
-                                                return;
-                                            }
-                                            const inputAsInt = parseInt(
-                                                e.currentTarget.value,
-                                            );
-                                            if (
-                                                isNaN(inputAsInt) ||
-                                                e.currentTarget.value.length > 6
-                                            ) {
-                                                return;
-                                            }
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            name="score"
+                                            id="score"
+                                            placeholder="score..."
+                                            value={score}
+                                            onInput={(e) => {
+                                                if (
+                                                    e.currentTarget.value === ""
+                                                ) {
+                                                    setScore("");
+                                                    return;
+                                                }
+                                                const inputAsInt = parseInt(
+                                                    e.currentTarget.value,
+                                                );
+                                                if (
+                                                    isNaN(inputAsInt) ||
+                                                    e.currentTarget.value
+                                                        .length > 6
+                                                ) {
+                                                    return;
+                                                }
 
-                                            setScore(inputAsInt);
-                                        }}
-                                        className="max-w-30 min-w-0 place-self-end px-0.5 bg-slate-50 text-black border-2 border-slate-600 focus:outline-1 outline-slate-50 focus:outline-double"
-                                    />
-                                    <button
-                                        type="submit"
-                                        className="max-w-30 bg-slate-600 hover:underline"
-                                    >
-                                        {"Submit"}
-                                    </button>
+                                                setScore(inputAsInt);
+                                            }}
+                                            className="max-w-30 min-w-0 px-0.5 bg-slate-50 text-black border-2 border-slate-600 focus:outline-1 outline-slate-50 focus:outline-double"
+                                        />
+                                        <button
+                                            type="submit"
+                                            disabled={
+                                                typeof score === "string" ||
+                                                ScoreToSeconds(score) ===
+                                                    undefined
+                                            }
+                                            className="max-w-30 bg-slate-600 not-disabled:hover:underline disabled:cursor-not-allowed disabled:text-slate-500"
+                                        >
+                                            {"Submit"}
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <p className="font-bold">
+                                            {"Time: "}
+                                            <span>{timePreview}</span>
+                                        </p>
+                                    </div>
                                 </form>
                             </div>
                         )}
