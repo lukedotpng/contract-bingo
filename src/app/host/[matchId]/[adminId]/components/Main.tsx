@@ -29,6 +29,8 @@ export default function Main({
     const bulkContractMutation = useMutation(
         api.contract.createBulkContractsWithBoard,
     );
+    const removeContractFromBoardMutation = useMutation(api.boardToContract.deleteBoardToContract)
+
     const boardSeedMutation = useMutation(api.board.generateNewSeed);
     const startTimeMutation = useMutation(api.match.setStartTime);
     const gracePeriodLengthMutation = useMutation(
@@ -146,6 +148,12 @@ export default function Main({
         }
     }
 
+    function RemoveContract(contractId: Id<"contract">) {
+        if (board !== ResponseStatus.NOT_FOUND && board !== undefined) {
+            removeContractFromBoardMutation({boardId: board._id, contractId: contractId})
+        }
+    }
+
     function RegenerateSeed() {
         if (board !== ResponseStatus.NOT_FOUND && board !== undefined) {
             boardSeedMutation({ boardId: board._id });
@@ -222,7 +230,7 @@ export default function Main({
                         contracts={matchContracts}
                         seed={board.seed}
                         boardSize={board.boardSize === "4x4" ? 4 : 5}
-                        RemoveContract={() => console.log("removing contract")}
+                        RemoveContract={RemoveContract}
                     />
                 </section>
             </div>
