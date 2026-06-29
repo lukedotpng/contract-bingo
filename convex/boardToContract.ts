@@ -164,13 +164,14 @@ export const removeBoardToContractSubmission = mutation({
 
 export const deleteBoardToContract = mutation({
     args: {
-        btcId: v.id("boardToContract"),
+        boardId: v.id("board"),
+        contractId: v.id("contract"),
     },
     handler: async (ctx, args) => {
-        const btc = await ctx.db.get("boardToContract", args.btcId);
+        const btc = await ctx.db.query("boardToContract").filter((q) => q.and(q.eq(q.field("boardId"),args.boardId), q.eq(q.field("contractId"),args.contractId))).first();
         if (btc == null) return ResponseStatus.NOT_FOUND;
 
-        await ctx.db.delete("boardToContract", args.btcId);
+        await ctx.db.delete("boardToContract", btc._id);
         return ResponseStatus.OK;
     },
 });

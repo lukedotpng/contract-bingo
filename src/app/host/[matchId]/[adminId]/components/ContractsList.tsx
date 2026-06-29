@@ -1,5 +1,5 @@
 import { FormatContractLocation } from "@/lib/FormattingUtils";
-import { Doc } from "@/../convex/_generated/dataModel";
+import { Doc, Id } from "@/../convex/_generated/dataModel";
 import { useMemo } from "react";
 import Rand from "rand-seed";
 import { IndexToPositionString } from "@/lib/BoardUtils";
@@ -13,7 +13,7 @@ export default function ContractsList({
     contracts: Doc<"contract">[];
     seed: string;
     boardSize: number;
-    RemoveContract: (contractId: string) => void;
+    RemoveContract: (contractId: Id<"contract">) => void;
 }) {
     const seededOrderContracts = useMemo(() => {
         const rand = new Rand(seed);
